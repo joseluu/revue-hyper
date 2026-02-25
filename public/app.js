@@ -39,6 +39,30 @@ async function init() {
   );
   rubriqueSelect.addEventListener('change', search);
   anneeSelect.addEventListener('change', search);
+
+  // Badges fréquences cliquables
+  document.querySelectorAll('.freq-badge[data-freq]').forEach(badge => {
+    badge.addEventListener('click', () => {
+      const freq = badge.dataset.freq;
+      const isActive = badge.classList.contains('active');
+      // Désactiver tous les badges
+      document.querySelectorAll('.freq-badge').forEach(b => b.classList.remove('active'));
+      if (isActive) {
+        // Deuxième clic : effacer le filtre
+        qInput.value = '';
+        search();
+      } else {
+        badge.classList.add('active');
+        qInput.value = freq;
+        search();
+      }
+    });
+  });
+
+  // Retirer le badge actif si on modifie le champ titre manuellement
+  qInput.addEventListener('input', () => {
+    document.querySelectorAll('.freq-badge').forEach(b => b.classList.remove('active'));
+  });
 }
 
 // ── Populate filter dropdowns ──────────────────────────────────────────────

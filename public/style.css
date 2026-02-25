@@ -148,6 +148,20 @@ header::before {
   letter-spacing: .05em;
   font-family: 'Courier New', monospace;
   white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s, transform .1s;
+  user-select: none;
+}
+.freq-badge:hover {
+  background: rgba(0,200,232,.28);
+  border-color: var(--cyan);
+  transform: scale(1.08);
+}
+.freq-badge.active {
+  background: var(--cyan);
+  color: var(--navy);
+  border-color: var(--cyan);
+  box-shadow: 0 0 8px rgba(0,200,232,.5);
 }
 
 /* ══════════════════════════════════════════════════════════
