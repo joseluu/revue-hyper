@@ -1,0 +1,441 @@
+/* ══════════════════════════════════════════════════════════
+   Revue Hyper — Feuille de style
+   Thème : radio amateur / hyperfréquences
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Reset ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Variables ───────────────────────────────────────────── */
+:root {
+  --navy:      #0b1e3d;   /* fond header / footer */
+  --navy-mid:  #0f2a52;   /* gradient header */
+  --cyan:      #00c8e8;   /* accent principal */
+  --cyan-dim:  #0097b5;
+  --amber:     #f59e0b;   /* feed horn / accent chaud */
+  --amber-dim: #d4860a;
+  --bg:        #eef2f8;   /* fond page */
+  --surface:   #ffffff;
+  --border:    #c8d4e8;
+  --text:      #1a2740;
+  --muted:     #5a6e8f;
+  --radius:    7px;
+  --shadow:    0 2px 8px rgba(11,30,61,.10);
+}
+
+/* ── Base ────────────────────────────────────────────────── */
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  /* grille de points subtile, style "papier millimétré technique" */
+  background-image:
+    radial-gradient(circle, #b8c8e0 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ══════════════════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════════════════ */
+header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #0d3566 100%);
+  color: #fff;
+  padding: 0;
+  box-shadow: 0 3px 14px rgba(0,0,0,.40);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Quadrillage décoratif en fond du header */
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,200,232,.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,200,232,.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+}
+
+.header-inner {
+  position: relative;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1.4rem 2rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Logo + titre ─────────────────────────────────────────── */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+
+/* Conteneur de l'icône antenne + ondes */
+.logo-icon {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  flex-shrink: 0;
+}
+.logo-icon svg {
+  width: 70px;
+  height: 70px;
+  filter: drop-shadow(0 0 6px rgba(0,200,232,.5));
+}
+
+/* Anneaux d'ondes radio animés */
+.wave {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--cyan);
+  opacity: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.3);
+  animation: radio-wave 3s ease-out infinite;
+}
+.w2 { animation-delay: 1s; }
+.w3 { animation-delay: 2s; }
+
+@keyframes radio-wave {
+  0%   { opacity: .7; transform: translate(-50%, -50%) scale(.3); }
+  100% { opacity: 0;  transform: translate(-50%, -50%) scale(2.4); }
+}
+
+/* Texte du titre */
+.header-text h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+  line-height: 1.1;
+  text-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+.header-text h1 .accent {
+  color: var(--cyan);
+}
+.header-text .subtitle {
+  color: #a8c4df;
+  font-size: .85rem;
+  margin-top: .3rem;
+  letter-spacing: .02em;
+}
+
+/* ── Badges fréquences ────────────────────────────────────── */
+.freq-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem .5rem;
+  justify-content: flex-end;
+}
+.freq-badge {
+  background: rgba(0,200,232,.12);
+  border: 1px solid rgba(0,200,232,.35);
+  color: var(--cyan);
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .18rem .55rem;
+  border-radius: 20px;
+  letter-spacing: .05em;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MAIN
+   ══════════════════════════════════════════════════════════ */
+main {
+  flex: 1;
+  max-width: 1300px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.6rem 1.5rem 2.5rem;
+}
+
+/* ── Panneau de recherche ─────────────────────────────────── */
+.search-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--cyan);
+  border-radius: var(--radius);
+  padding: 1.3rem 1.5rem;
+  margin-bottom: 1.4rem;
+  box-shadow: var(--shadow);
+}
+
+.panel-title {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--navy-mid);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.icon-search-title {
+  width: 16px; height: 16px;
+  color: var(--cyan-dim);
+  flex-shrink: 0;
+}
+
+.search-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(195px, 1fr));
+  gap: .9rem 1.2rem;
+  align-items: end;
+}
+
+/* ── Champs ───────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: .3rem; }
+.field label {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+input[type="text"],
+select {
+  height: 2.45rem;
+  padding: 0 .8rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: .93rem;
+  color: var(--text);
+  background: #f7f9fd;
+  transition: border-color .15s, box-shadow .15s;
+}
+input[type="text"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--cyan);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px rgba(0,200,232,.18);
+}
+input[type="text"]::placeholder { color: #9aaccb; }
+
+/* ── Boutons ──────────────────────────────────────────────── */
+.actions { flex-direction: row; gap: .6rem; align-items: flex-end; }
+
+button {
+  height: 2.45rem;
+  padding: 0 1.2rem;
+  border: none;
+  border-radius: var(--radius);
+  font-size: .92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .1s, box-shadow .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  letter-spacing: .02em;
+}
+button:active { transform: scale(.96); }
+
+#btn-search {
+  background: linear-gradient(135deg, #0097b5, var(--cyan));
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,200,232,.30);
+}
+#btn-search:hover {
+  background: linear-gradient(135deg, #007a99, #00b0cc);
+  box-shadow: 0 4px 14px rgba(0,200,232,.40);
+}
+
+button.secondary { background: #dce6f4; color: var(--text); }
+button.secondary:hover { background: #c8d6ee; }
+
+/* ══════════════════════════════════════════════════════════
+   RÉSULTATS
+   ══════════════════════════════════════════════════════════ */
+.results-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  box-shadow: var(--shadow);
+}
+
+/* Barre de statut */
+.status {
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: .7rem;
+  min-height: 1.2em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Tableau ──────────────────────────────────────────────── */
+.table-wrapper { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .875rem;
+}
+
+thead tr {
+  background: linear-gradient(90deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: #fff;
+}
+thead th {
+  padding: .7rem .85rem;
+  text-align: left;
+  font-weight: 700;
+  white-space: nowrap;
+  letter-spacing: .03em;
+  font-size: .8rem;
+  text-transform: uppercase;
+}
+
+/* Ligne de séparation en dessous du header */
+thead tr::after {
+  content: '';
+  display: block;
+  height: 2px;
+  background: var(--cyan);
+}
+
+tbody tr {
+  border-bottom: 1px solid #e4ecf6;
+  transition: background .1s;
+}
+tbody tr:nth-child(even) { background: #f6f9fd; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #e4f4fb; }
+
+tbody td {
+  padding: .6rem .85rem;
+  vertical-align: top;
+  line-height: 1.45;
+}
+
+/* Largeurs colonnes */
+.col-rubrique { width: 17%; }
+.col-titre    { width: 36%; }
+.col-auteur   { width: 8%;  white-space: nowrap; font-family: 'Courier New', monospace; font-weight: 700; color: var(--navy-mid); }
+.col-date     { width: 9%;  white-space: nowrap; color: var(--muted); font-size: .83rem; }
+.col-bulletin { width: 8%;  text-align: center; white-space: nowrap; }
+.col-dl       { width: 9%;  text-align: center; }
+
+/* Tag rubrique */
+.tag-rubrique {
+  display: inline-block;
+  background: #e8f0fb;
+  color: var(--navy-mid);
+  border-radius: 4px;
+  padding: .1rem .45rem;
+  font-size: .78rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+/* Badge N° bulletin */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy);
+  color: var(--cyan);
+  border-radius: 14px;
+  padding: .12rem .6rem;
+  font-size: .76rem;
+  font-weight: 800;
+  font-family: 'Courier New', monospace;
+  letter-spacing: .04em;
+  border: 1px solid rgba(0,200,232,.25);
+}
+
+/* Bouton de téléchargement */
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  background: linear-gradient(135deg, #d4730a, var(--amber));
+  color: #fff;
+  border-radius: var(--radius);
+  padding: .28rem .65rem;
+  font-size: .8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background .15s, box-shadow .15s;
+  box-shadow: 0 2px 6px rgba(245,158,11,.25);
+  white-space: nowrap;
+}
+.dl-btn:hover {
+  background: linear-gradient(135deg, #b8620a, #e89209);
+  box-shadow: 0 4px 10px rgba(245,158,11,.35);
+}
+.dl-btn svg { flex-shrink: 0; }
+
+/* Mise en évidence des termes recherchés */
+mark {
+  background: linear-gradient(120deg, #fff176 0%, #ffe234 100%);
+  border-radius: 2px;
+  padding: 0 2px;
+  color: #1a2740;
+}
+
+/* ── Aucun résultat ───────────────────────────────────────── */
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .8rem;
+  padding: 3rem;
+  color: var(--muted);
+  font-size: .95rem;
+}
+.no-results svg { opacity: .35; }
+.hidden { display: none; }
+
+/* ══════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════ */
+footer {
+  background: var(--navy);
+  color: #7090b8;
+  padding: .9rem 1.5rem;
+  font-size: .8rem;
+  border-top: 2px solid rgba(0,200,232,.25);
+}
+.footer-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  gap: .6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.footer-sep { color: var(--cyan); opacity: .4; font-weight: 700; }
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .freq-badges { display: none; }
+}
+@media (max-width: 700px) {
+  .col-rubrique, .col-date { display: none; }
+  .search-grid { grid-template-columns: 1fr 1fr; }
+  .header-text h1 { font-size: 1.5rem; }
+  .logo-icon { width: 52px; height: 52px; }
+  .logo-icon svg { width: 52px; height: 52px; }
+}
+@media (max-width: 440px) {
+  .search-grid { grid-template-columns: 1fr; }
+}

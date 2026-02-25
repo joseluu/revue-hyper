@@ -1,0 +1,13 @@
+{
+  "name": "revue-hyper",
+  "version": "1.0.0",
+  "description": "Site de recherche des articles de la Revue Hyper",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "convert": ".venv/bin/python3 convert.py"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

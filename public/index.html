@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revue Hyper — Index des articles</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ══ HEADER ══════════════════════════════════════════════════════════ -->
+  <header>
+    <div class="header-inner">
+
+      <!-- Logo + titre -->
+      <div class="header-brand">
+        <div class="logo-icon" aria-hidden="true">
+          <!-- Antenne parabolique SVG -->
+          <svg viewBox="0 0 90 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Réflecteur parabolique -->
+            <path d="M8 72 Q45 4 82 72" stroke="#00d4ff" stroke-width="3.5" stroke-linecap="round"/>
+            <!-- Bras support -->
+            <line x1="45" y1="38" x2="45" y2="72" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Tête de réception (feed horn) -->
+            <circle cx="45" cy="35" r="6" fill="#f59e0b" stroke="#fbbf24" stroke-width="1.5"/>
+            <circle cx="45" cy="35" r="2.5" fill="#fff"/>
+            <!-- Pylône -->
+            <rect x="40" y="72" width="10" height="6" rx="2" fill="#334e6e"/>
+            <!-- Onde émise (arc fin) -->
+            <path d="M28 56 Q45 44 62 56" stroke="#00d4ff" stroke-width="1.2" stroke-dasharray="3 2" opacity="0.6"/>
+          </svg>
+          <!-- Ondes radio animées -->
+          <span class="wave w1"></span>
+          <span class="wave w2"></span>
+          <span class="wave w3"></span>
+        </div>
+
+        <div class="header-text">
+          <h1>Revue <span class="accent">Hyper</span></h1>
+          <p class="subtitle">Index des articles · SHF / EHF · 1996 – décembre 2024</p>
+        </div>
+      </div>
+
+      <!-- Badges fréquences -->
+      <div class="freq-badges" aria-hidden="true">
+        <span class="freq-badge">1,2 GHz</span>
+        <span class="freq-badge">2,4 GHz</span>
+        <span class="freq-badge">5,7 GHz</span>
+        <span class="freq-badge">10 GHz</span>
+        <span class="freq-badge">24 GHz</span>
+        <span class="freq-badge">47 GHz</span>
+        <span class="freq-badge">122 GHz</span>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ══ MAIN ════════════════════════════════════════════════════════════ -->
+  <main>
+
+    <!-- Panneau de recherche -->
+    <section class="search-panel" aria-label="Critères de recherche">
+      <h2 class="panel-title">
+        <svg class="icon-search-title" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+        </svg>
+        Recherche d'articles
+      </h2>
+
+      <div class="search-grid">
+        <div class="field">
+          <label for="q">Mot(s) du titre</label>
+          <input type="text" id="q" placeholder="antenne, transverter, LNA…" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="auteur">Auteur (indicatif)</label>
+          <input type="text" id="auteur" placeholder="F1GHB, F6DER…" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="rubrique">Rubrique</label>
+          <select id="rubrique">
+            <option value="">— Toutes —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="annee">Année</label>
+          <select id="annee">
+            <option value="">— Toutes —</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="bulletin">N° de bulletin</label>
+          <input type="text" id="bulletin" placeholder="326" autocomplete="off">
+        </div>
+        <div class="field actions">
+          <button id="btn-search">
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+            </svg>
+            Rechercher
+          </button>
+          <button id="btn-reset" class="secondary">Effacer</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panneau résultats -->
+    <section class="results-panel" aria-label="Résultats">
+      <div id="status" class="status" role="status" aria-live="polite"></div>
+      <div class="table-wrapper">
+        <table id="results-table">
+          <thead>
+            <tr>
+              <th class="col-rubrique">Rubrique</th>
+              <th class="col-titre">Titre de l'article</th>
+              <th class="col-auteur">Auteur</th>
+              <th class="col-date">Date</th>
+              <th class="col-bulletin">N° bulletin</th>
+              <th class="col-dl">Télécharger</th>
+            </tr>
+          </thead>
+          <tbody id="results-body"></tbody>
+        </table>
+      </div>
+      <div id="no-results" class="no-results hidden">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35M11 8v6M11 16h.01"/>
+        </svg>
+        <p>Aucun article trouvé pour ces critères.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer>
+    <div class="footer-inner">
+      <span>Revue Hyper</span>
+      <span class="footer-sep">·</span>
+      <span>Association française radio-amateurs hyperfréquences</span>
+      <span class="footer-sep">·</span>
+      <span>900 articles · 1996–2024</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
