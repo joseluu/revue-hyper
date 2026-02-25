@@ -131,10 +131,17 @@ header::before {
 }
 
 /* ── Badges fréquences ────────────────────────────────────── */
+.header-right {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  align-items: flex-end;
+}
+
 .freq-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: .4rem .5rem;
+  gap: .35rem .45rem;
   justify-content: flex-end;
 }
 .freq-badge {
@@ -162,6 +169,23 @@ header::before {
   color: var(--navy);
   border-color: var(--cyan);
   box-shadow: 0 0 8px rgba(0,200,232,.5);
+}
+
+/* Badges mots-clés (lignes 2 & 3) — teinte ambre */
+.kw-badge {
+  background: rgba(245,158,11,.10);
+  border-color: rgba(245,158,11,.35);
+  color: #fbbf24;
+}
+.kw-badge:hover {
+  background: rgba(245,158,11,.25);
+  border-color: #f59e0b;
+}
+.kw-badge.active {
+  background: var(--amber);
+  color: var(--navy);
+  border-color: var(--amber);
+  box-shadow: 0 0 8px rgba(245,158,11,.5);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -441,7 +465,7 @@ footer {
    RESPONSIVE
    ══════════════════════════════════════════════════════════ */
 @media (max-width: 900px) {
-  .freq-badges { display: none; }
+  .header-right { display: none; }
 }
 @media (max-width: 700px) {
   .col-rubrique, .col-date { display: none; }
