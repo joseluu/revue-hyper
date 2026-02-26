@@ -4,39 +4,46 @@ const fs = require('fs');
 
 const app = express();
 const PORT = 4401;
+const bulletinsDir = path.join(__dirname, 'bulletins');
+
+// Construit la map num -> nom de fichier réel à partir du dossier bulletins/
+function buildBulletinMap() {
+  const map = {};
+  try {
+    const files = fs.readdirSync(bulletinsDir);
+    files.forEach(f => {
+      if (!f.toLowerCase().endsWith('.pdf')) return;
+      // Correspondance "326.pdf"
+      const simple = f.match(/^(\d+)\.pdf$/i);
+      if (simple) { map[simple[1]] = f; return; }
+      // Correspondance "BULLETIN N° 326 ..."
+      const fancy = f.match(/n[°o]?\s*(\d+)/i);
+      if (fancy) { map[fancy[1]] = f; }
+    });
+  } catch (e) { /* dossier absent */ }
+  return map;
+}
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve bulletin PDFs
-// Tries exact filename first (e.g. 326.pdf), then falls back to pattern matching
+// Liste des numéros de bulletins disponibles
+app.get('/api/bulletins', (req, res) => {
+  const map = buildBulletinMap();
+  res.json(Object.keys(map).map(Number).sort((a, b) => a - b));
+});
+
+// Téléchargement d'un bulletin
 app.get('/bulletins/:filename', (req, res) => {
   const filename = req.params.filename;
-  const bulletinsDir = path.join(__dirname, 'bulletins');
-  const exactPath = path.join(bulletinsDir, filename);
+  const num = filename.replace(/\.pdf$/i, '');
+  const map = buildBulletinMap();
 
-  if (fs.existsSync(exactPath)) {
-    return res.sendFile(exactPath);
+  if (map[num]) {
+    return res.sendFile(path.join(bulletinsDir, map[num]));
   }
 
-  // Fallback: find any file whose name contains the bulletin number
-  const num = filename.replace('.pdf', '');
-  try {
-    const files = fs.readdirSync(bulletinsDir);
-    const match = files.find(f =>
-      f.toLowerCase().includes(`n° ${num}`) ||
-      f.toLowerCase().includes(`n°${num}`) ||
-      f.toLowerCase().includes(`n ${num}`) ||
-      f === `${num}.pdf`
-    );
-    if (match) {
-      return res.sendFile(path.join(bulletinsDir, match));
-    }
-  } catch (e) {
-    // bulletins dir not accessible
-  }
-
-  res.status(404).json({ error: `Bulletin ${filename} non trouvé` });
+  res.status(404).send('Bulletin non disponible');
 });
 
 app.listen(PORT, () => {

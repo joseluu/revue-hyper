@@ -2,6 +2,7 @@
 
 // ── State ──────────────────────────────────────────────────────────────────
 let allArticles = [];
+let availableBulletins = new Set(); // numéros disponibles en téléchargement
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const qInput        = document.getElementById('q');
@@ -20,9 +21,16 @@ const table         = document.getElementById('results-table');
 async function init() {
   statusEl.textContent = 'Chargement de l\'index…';
   try {
-    const resp = await fetch('articles.json');
-    if (!resp.ok) throw new Error(resp.statusText);
-    allArticles = await resp.json();
+    const [articlesResp, bulletinsResp] = await Promise.all([
+      fetch('articles.json'),
+      fetch('/api/bulletins'),
+    ]);
+    if (!articlesResp.ok) throw new Error(articlesResp.statusText);
+    allArticles = await articlesResp.json();
+    if (bulletinsResp.ok) {
+      const nums = await bulletinsResp.json();
+      availableBulletins = new Set(nums.map(String));
+    }
   } catch (e) {
     statusEl.textContent = 'Erreur de chargement de l\'index : ' + e.message;
     return;
@@ -147,14 +155,16 @@ function renderResults(articles, terms) {
       <td>${highlight(a.auteur, terms.auteur)}</td>
       <td>${formatDate(a.date)}</td>
       <td class="col-bulletin"><span class="badge">N°&thinsp;${escHtml(a.bulletinNum)}</span></td>
-      <td class="col-dl">
-        <a class="dl-btn" href="${escHtml(dlHref)}" download title="Télécharger le bulletin N°${escHtml(a.bulletinNum)}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 3h14v2H5v-2z"/>
-          </svg>
-          PDF
-        </a>
-      </td>`;
+      <td class="col-dl">${
+        availableBulletins.has(a.bulletinNum)
+        ? `<a class="dl-btn" href="${escHtml(dlHref)}" download title="Télécharger le bulletin N°${escHtml(a.bulletinNum)}">
+             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+               <path d="M12 16l-5-5h3V4h4v7h3l-5 5zm-7 3h14v2H5v-2z"/>
+             </svg>
+             PDF
+           </a>`
+        : `<span class="dl-unavailable" title="Bulletin non encore disponible">—</span>`
+      }</td>`;
     frag.appendChild(tr);
   });
 

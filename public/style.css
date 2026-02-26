@@ -419,6 +419,14 @@ tbody td {
 }
 .dl-btn svg { flex-shrink: 0; }
 
+/* Bulletin non disponible */
+.dl-unavailable {
+  color: #b0bcd0;
+  font-size: .85rem;
+  display: block;
+  text-align: center;
+}
+
 /* Mise en évidence des termes recherchés */
 mark {
   background: linear-gradient(120deg, #fff176 0%, #ffe234 100%);
