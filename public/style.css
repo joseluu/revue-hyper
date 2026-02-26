@@ -87,10 +87,12 @@ header::before {
   height: 70px;
   flex-shrink: 0;
 }
-.logo-icon svg {
+.logo-icon img {
   width: 70px;
   height: 70px;
-  filter: drop-shadow(0 0 6px rgba(0,200,232,.5));
+  border-radius: 14px;
+  box-shadow: 0 0 14px rgba(0,200,232,.4), 0 2px 8px rgba(0,0,0,.4);
+  display: block;
 }
 
 /* Anneaux d'ondes radio animés */
