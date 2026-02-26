@@ -3,6 +3,7 @@
 // ── State ──────────────────────────────────────────────────────────────────
 let allArticles = [];
 let availableBulletins = new Set(); // numéros disponibles en téléchargement
+let currentSort = { key: null, dir: 1 }; // tri courant
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const qInput        = document.getElementById('q');
@@ -47,6 +48,30 @@ async function init() {
   );
   rubriqueSelect.addEventListener('change', search);
   anneeSelect.addEventListener('change', search);
+
+  // Tri par clic sur en-tête de colonne
+  const sortKeys = {
+    'col-rubrique': 'rubrique',
+    'col-titre':    'titre',
+    'col-auteur':   'auteur',
+    'col-date':     'date',
+    'col-bulletin': 'bulletinNum',
+  };
+  document.querySelectorAll('thead th').forEach(th => {
+    const key = sortKeys[th.className.trim().split(' ')[0]];
+    if (!key) return;
+    th.addEventListener('click', () => {
+      if (currentSort.key === key) {
+        currentSort.dir *= -1;
+      } else {
+        currentSort.key = key;
+        currentSort.dir = 1;
+      }
+      document.querySelectorAll('thead th').forEach(h => h.classList.remove('sorted-asc','sorted-desc'));
+      th.classList.add(currentSort.dir === 1 ? 'sorted-asc' : 'sorted-desc');
+      search();
+    });
+  });
 
   // Badges fréquences cliquables
   document.querySelectorAll('.freq-badge[data-freq]').forEach(badge => {
@@ -144,6 +169,17 @@ function renderResults(articles, terms) {
 
   table.classList.remove('hidden');
   noResults.classList.add('hidden');
+
+  // Appliquer le tri si actif
+  if (currentSort.key) {
+    const k = currentSort.key;
+    const d = currentSort.dir;
+    articles = [...articles].sort((a, b) => {
+      const va = k === 'bulletinNum' ? Number(a[k]) || 0 : (a[k] || '').toLowerCase();
+      const vb = k === 'bulletinNum' ? Number(b[k]) || 0 : (b[k] || '').toLowerCase();
+      return va < vb ? -d : va > vb ? d : 0;
+    });
+  }
 
   const frag = document.createDocumentFragment();
   articles.forEach(a => {

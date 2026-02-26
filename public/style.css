@@ -339,7 +339,14 @@ thead th {
   letter-spacing: .03em;
   font-size: .8rem;
   text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  transition: background .15s;
 }
+thead th:hover { background: rgba(255,255,255,.08); }
+thead th.sorted-asc::after  { content: ' ▲'; font-size: .65rem; opacity: .9; }
+thead th.sorted-desc::after { content: ' ▼'; font-size: .65rem; opacity: .9; }
+thead th.col-dl { cursor: default; }
 
 /* Ligne de séparation en dessous du header */
 thead tr::after {
@@ -366,10 +373,14 @@ tbody td {
 /* Largeurs colonnes */
 .col-rubrique { width: 17%; }
 .col-titre    { width: 36%; }
-.col-auteur   { width: 8%;  white-space: nowrap; font-family: 'Courier New', monospace; font-weight: 700; color: var(--navy-mid); }
-.col-date     { width: 9%;  white-space: nowrap; color: var(--muted); font-size: .83rem; }
+.col-auteur   { width: 8%;  white-space: nowrap; }
+.col-date     { width: 9%;  white-space: nowrap; }
 .col-bulletin { width: 8%;  text-align: center; white-space: nowrap; }
 .col-dl       { width: 9%;  text-align: center; }
+
+/* Styles spécifiques aux cellules tbody uniquement */
+tbody td.col-auteur { font-family: 'Courier New', monospace; font-weight: 700; color: var(--navy-mid); }
+tbody td.col-date   { color: var(--muted); font-size: .83rem; }
 
 /* Tag rubrique */
 .tag-rubrique {
