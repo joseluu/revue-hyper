@@ -1,3 +1,5 @@
 node_modules/
 .venv/
 *.log
+# Les PDFs sont trop lourds pour git — transfert via rsync
+bulletins/*.pdf
