@@ -1,0 +1,6 @@
+{
+  "rateLimitConfig": {
+    "maxFilesPerHour": 10,
+    "blockDurationMinutes": 60
+  }
+}
