@@ -190,6 +190,31 @@ header::before {
   box-shadow: 0 0 8px rgba(245,158,11,.5);
 }
 
+/* Badge de téléchargement collection — lien stylisé */
+.download-badge {
+  display: inline-block;
+  text-decoration: none;
+  background: rgba(245,158,11,.12) !important;
+  border: 1px solid rgba(245,158,11,.35) !important;
+  color: #fbbf24 !important;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: .22rem .65rem;
+  border-radius: 20px;
+  letter-spacing: .05em;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s, transform .1s;
+  user-select: none;
+}
+.download-badge:hover {
+  background: rgba(245,158,11,.26) !important;
+  border-color: #f59e0b !important;
+  color: #fcd34d !important;
+  transform: scale(1.08);
+}
+
 /* ══════════════════════════════════════════════════════════
    MAIN
    ══════════════════════════════════════════════════════════ */
