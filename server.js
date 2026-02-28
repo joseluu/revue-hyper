@@ -131,6 +131,35 @@ app.get('/api/bulletins', (req, res) => {
   res.json(Object.keys(map).map(Number).sort((a, b) => a - b));
 });
 
+// Téléchargement de la collection complète
+app.get('/download-collection', (req, res) => {
+  const ip = req.ip || 'unknown';
+  const collectionSize = 1557127168; // 1.45 GB in bytes
+
+  // Check if IP is already blocked
+  const blockStatus = checkAndUpdateIPStatus(ip);
+  if (blockStatus.isBlocked) {
+    logDownload(ip, 'collection-complete', 0, true);
+    const remainingTime = Math.ceil((downloadTracking[ip].blockedUntil - Date.now()) / 1000 / 60);
+    return res.status(429).json({
+      error: 'Trop de téléchargements',
+      message: `Votre adresse IP a dépassé la limite de ${rateLimitConfig.maxFilesPerHour} fichiers par heure. Veuillez réessayer dans ${remainingTime} minute(s).`,
+      retryAfter: remainingTime
+    });
+  }
+
+  // Record the download
+  const limitStatus = recordDownload(ip);
+  logDownload(ip, 'collection-complete.zip', collectionSize, false);
+
+  if (limitStatus.limitExceeded) {
+    logDownload(ip, 'LIMIT_EXCEEDED', 0, true);
+  }
+
+  // Redirect to Google Drive direct download link
+  res.redirect('https://drive.google.com/uc?export=download&id=1t9m-IQrMjU3fr8ys0ThiwxfeXzVHFnOB');
+});
+
 // Téléchargement d'un bulletin
 app.get('/bulletins/:filename', (req, res) => {
   const filename = req.params.filename;
