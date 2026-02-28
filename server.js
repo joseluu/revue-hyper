@@ -6,6 +6,9 @@ const app = express();
 const PORT = 4401;
 const bulletinsDir = path.join(__dirname, 'bulletins');
 
+// Trust nginx proxy for accurate client IP detection
+app.set('trust proxy', 1);
+
 // Load rate limit configuration
 const configPath = path.join(__dirname, 'download-config.json');
 let rateLimitConfig = { maxFilesPerHour: 10, blockDurationMinutes: 60 };
@@ -133,7 +136,8 @@ app.get('/bulletins/:filename', (req, res) => {
   const filename = req.params.filename;
   const num = filename.replace(/\.pdf$/i, '');
   const map = buildBulletinMap();
-  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  // Get real client IP (handles X-Forwarded-For from nginx proxy)
+  const ip = req.ip || 'unknown';
 
   // Check if IP is already blocked
   const blockStatus = checkAndUpdateIPStatus(ip);
