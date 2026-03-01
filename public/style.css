@@ -581,6 +581,12 @@ footer {
   gap: .6rem;
 }
 
+.pdf-separator {
+  color: rgba(0,200,232,.25);
+  font-weight: 700;
+  margin: 0 .2rem;
+}
+
 .pdf-tool-btn {
   background: transparent;
   color: var(--cyan);

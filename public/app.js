@@ -10,6 +10,7 @@ const pdfViewer = {
   instance: null,       // PDFDocumentProxy
   totalPages: 0,
   scale: 1.0,           // Will be set to fit width
+  rotation: 0,          // 0, 90, 180, 270
   bulletinNum: null,
   bulletinPath: null,
   rendering: false,
@@ -41,6 +42,8 @@ const pdfCanvasWrap  = document.getElementById('pdf-canvas-wrap');
 const pdfTitle       = document.getElementById('pdf-title');
 const pdfZoomInBtn   = document.getElementById('pdf-zoom-in');
 const pdfZoomOutBtn  = document.getElementById('pdf-zoom-out');
+const pdfRotateLeftBtn  = document.getElementById('pdf-rotate-left');
+const pdfRotateRightBtn = document.getElementById('pdf-rotate-right');
 const pdfSaveBtn     = document.getElementById('pdf-save');
 const pdfCloseBtn    = document.getElementById('pdf-close');
 
@@ -48,6 +51,7 @@ const pdfCloseBtn    = document.getElementById('pdf-close');
 async function openViewer(num, path) {
   pdfViewer.bulletinNum = num;
   pdfViewer.bulletinPath = path || `/bulletins/${num}.pdf`;
+  pdfViewer.rotation = 0;  // Reset rotation for new PDF
   pdfTitle.textContent = `Bulletin N°${escHtml(num)}`;
 
   try {
@@ -97,6 +101,7 @@ async function renderAllPages() {
       canvas.style.marginBottom = '1rem';
       canvas.style.borderRadius = '4px';
       canvas.style.boxShadow = '0 4px 20px rgba(0,0,0,.5)';
+      applyRotation(canvas);
 
       const ctx = canvas.getContext('2d');
       await page.render({ canvasContext: ctx, viewport }).promise;
@@ -108,6 +113,14 @@ async function renderAllPages() {
     console.error('Error rendering pages:', e);
   } finally {
     pdfViewer.rendering = false;
+  }
+}
+
+function applyRotation(canvas) {
+  if (pdfViewer.rotation === 0) {
+    canvas.style.transform = 'none';
+  } else {
+    canvas.style.transform = `rotate(${pdfViewer.rotation}deg)`;
   }
 }
 
@@ -238,6 +251,19 @@ async function init() {
     if (!pdfViewer.instance) return;
     pdfViewer.scale = Math.max(0.5, pdfViewer.scale - 0.2);
     renderAllPages();
+  });
+
+  // PDF Viewer — Rotation buttons
+  pdfRotateLeftBtn.addEventListener('click', () => {
+    if (!pdfViewer.instance) return;
+    pdfViewer.rotation = (pdfViewer.rotation - 90 + 360) % 360;
+    pdfViewer.canvases.forEach(canvas => applyRotation(canvas));
+  });
+
+  pdfRotateRightBtn.addEventListener('click', () => {
+    if (!pdfViewer.instance) return;
+    pdfViewer.rotation = (pdfViewer.rotation + 90) % 360;
+    pdfViewer.canvases.forEach(canvas => applyRotation(canvas));
   });
 
   // PDF Viewer — Drag to pan
