@@ -10,11 +10,14 @@ const pdfViewer = {
   instance: null,       // PDFDocumentProxy
   page: 1,
   totalPages: 0,
-  scale: 1.5,
+  scale: 1.0,           // Will be set to fit width
   bulletinNum: null,
   bulletinPath: null,
   rendering: false,
-  drag: { active: false, startX: 0, startY: 0, origScrollLeft: 0, origScrollTop: 0 }
+  canvasWidth: 0,
+  canvasHeight: 0,
+  drag: { active: false, startX: 0, startY: 0, origScrollLeft: 0, origScrollTop: 0 },
+  scrollDir: 0          // Track scroll direction for page navigation
 };
 
 // Configure PDF.js worker
@@ -40,10 +43,6 @@ const pdfModalInner  = document.getElementById('pdf-modal-inner');
 const pdfCanvas      = document.getElementById('pdf-canvas');
 const pdfCanvasWrap  = document.getElementById('pdf-canvas-wrap');
 const pdfTitle       = document.getElementById('pdf-title');
-const pdfPageInput   = document.getElementById('pdf-page-input');
-const pdfTotalPages  = document.getElementById('pdf-total-pages');
-const pdfPrevBtn     = document.getElementById('pdf-prev');
-const pdfNextBtn     = document.getElementById('pdf-next');
 const pdfSaveBtn     = document.getElementById('pdf-save');
 const pdfCloseBtn    = document.getElementById('pdf-close');
 
@@ -52,7 +51,6 @@ async function openViewer(num, path) {
   pdfViewer.bulletinNum = num;
   pdfViewer.bulletinPath = path || `/bulletins/${num}.pdf`;
   pdfViewer.page = 1;
-  pdfViewer.scale = 1.5;
   pdfTitle.textContent = `Bulletin N°${escHtml(num)}`;
 
   try {
@@ -61,9 +59,17 @@ async function openViewer(num, path) {
     const arrayBuffer = await resp.arrayBuffer();
     pdfViewer.instance = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
     pdfViewer.totalPages = pdfViewer.instance.numPages;
-    pdfTotalPages.textContent = pdfViewer.totalPages;
+
+    // Calculate scale to fit width
+    const firstPage = await pdfViewer.instance.getPage(1);
+    const viewport = firstPage.getViewport({ scale: 1.0 });
+    // Calculate scale so the page width fits the canvas wrap width
+    const wrapWidth = pdfCanvasWrap.clientWidth - 32; // Account for padding
+    pdfViewer.scale = wrapWidth / viewport.width;
 
     pdfModal.classList.remove('hidden');
+    pdfCanvasWrap.scrollTop = 0;
+    pdfCanvasWrap.scrollLeft = 0;
     await renderPage(1);
   } catch (e) {
     alert('Erreur lors du chargement du PDF : ' + e.message);
@@ -77,7 +83,6 @@ async function renderPage(pageNum) {
   // Clamp page number
   pageNum = Math.max(1, Math.min(pageNum, pdfViewer.totalPages));
   pdfViewer.page = pageNum;
-  pdfPageInput.value = pageNum;
 
   pdfViewer.rendering = true;
   try {
@@ -86,6 +91,8 @@ async function renderPage(pageNum) {
 
     pdfCanvas.width = viewport.width;
     pdfCanvas.height = viewport.height;
+    pdfViewer.canvasWidth = viewport.width;
+    pdfViewer.canvasHeight = viewport.height;
 
     const ctx = pdfCanvas.getContext('2d');
     await page.render({ canvasContext: ctx, viewport }).promise;
@@ -213,29 +220,16 @@ async function init() {
     }
   });
 
-  // PDF Viewer — Navigation buttons
-  pdfPrevBtn.addEventListener('click', () => {
-    renderPage(pdfViewer.page - 1);
-  });
-  pdfNextBtn.addEventListener('click', () => {
-    renderPage(pdfViewer.page + 1);
-  });
-
-  // PDF Viewer — Page input
-  pdfPageInput.addEventListener('change', () => {
-    const num = parseInt(pdfPageInput.value, 10);
-    if (!isNaN(num)) {
-      renderPage(num);
-    }
-  });
-
-  // PDF Viewer — Zoom via wheel
+  // PDF Viewer — Mouse wheel for page navigation
   pdfCanvasWrap.addEventListener('wheel', e => {
-    if (!pdfViewer.instance) return;
+    if (!pdfViewer.instance || pdfViewer.drag.active) return;
     e.preventDefault();
-    const delta = e.deltaY > 0 ? -0.2 : 0.2;
-    pdfViewer.scale = Math.max(0.5, pdfViewer.scale + delta);
-    renderPage(pdfViewer.page);
+    // Scroll down = next page, scroll up = previous page
+    if (e.deltaY > 0 && pdfViewer.page < pdfViewer.totalPages) {
+      renderPage(pdfViewer.page + 1);
+    } else if (e.deltaY < 0 && pdfViewer.page > 1) {
+      renderPage(pdfViewer.page - 1);
+    }
   }, { passive: false });
 
   // PDF Viewer — Drag to pan
