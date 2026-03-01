@@ -267,15 +267,19 @@ async function init() {
   });
 
   // PDF Viewer — Drag to pan
-  pdfCanvasWrap.addEventListener('mousedown', e => {
-    if (!pdfViewer.instance) return;
+  document.addEventListener('mousedown', e => {
+    if (!pdfViewer.instance || pdfModal.classList.contains('hidden')) return;
+    // Check if click is inside canvas-wrap
+    if (!pdfCanvasWrap.contains(e.target)) return;
+
     pdfViewer.drag.active = true;
     pdfViewer.drag.startX = e.clientX;
     pdfViewer.drag.startY = e.clientY;
     pdfViewer.drag.origScrollLeft = pdfCanvasWrap.scrollLeft;
     pdfViewer.drag.origScrollTop = pdfCanvasWrap.scrollTop;
     pdfCanvasWrap.classList.add('dragging');
-  });
+    e.preventDefault();
+  }, true);
 
   document.addEventListener('mousemove', e => {
     if (!pdfViewer.drag.active) return;
