@@ -8,16 +8,13 @@ let currentSort = { key: null, dir: 1 }; // tri courant
 // ── PDF Viewer State ────────────────────────────────────────────────────────
 const pdfViewer = {
   instance: null,       // PDFDocumentProxy
-  page: 1,
   totalPages: 0,
   scale: 1.0,           // Will be set to fit width
   bulletinNum: null,
   bulletinPath: null,
   rendering: false,
-  canvasWidth: 0,
-  canvasHeight: 0,
-  drag: { active: false, startX: 0, startY: 0, origScrollLeft: 0, origScrollTop: 0 },
-  scrollDir: 0          // Track scroll direction for page navigation
+  canvases: [],         // Array of rendered canvases
+  drag: { active: false, startX: 0, startY: 0, origScrollLeft: 0, origScrollTop: 0 }
 };
 
 // Configure PDF.js worker
@@ -40,9 +37,10 @@ const table         = document.getElementById('results-table');
 // PDF Viewer DOM refs
 const pdfModal       = document.getElementById('pdf-modal');
 const pdfModalInner  = document.getElementById('pdf-modal-inner');
-const pdfCanvas      = document.getElementById('pdf-canvas');
 const pdfCanvasWrap  = document.getElementById('pdf-canvas-wrap');
 const pdfTitle       = document.getElementById('pdf-title');
+const pdfZoomInBtn   = document.getElementById('pdf-zoom-in');
+const pdfZoomOutBtn  = document.getElementById('pdf-zoom-out');
 const pdfSaveBtn     = document.getElementById('pdf-save');
 const pdfCloseBtn    = document.getElementById('pdf-close');
 
@@ -50,7 +48,6 @@ const pdfCloseBtn    = document.getElementById('pdf-close');
 async function openViewer(num, path) {
   pdfViewer.bulletinNum = num;
   pdfViewer.bulletinPath = path || `/bulletins/${num}.pdf`;
-  pdfViewer.page = 1;
   pdfTitle.textContent = `Bulletin N°${escHtml(num)}`;
 
   try {
@@ -60,44 +57,55 @@ async function openViewer(num, path) {
     pdfViewer.instance = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
     pdfViewer.totalPages = pdfViewer.instance.numPages;
 
+    pdfModal.classList.remove('hidden');
+
+    // Wait for modal to be rendered before calculating width
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
     // Calculate scale to fit width
     const firstPage = await pdfViewer.instance.getPage(1);
     const viewport = firstPage.getViewport({ scale: 1.0 });
     // Calculate scale so the page width fits the canvas wrap width
     const wrapWidth = pdfCanvasWrap.clientWidth - 32; // Account for padding
-    pdfViewer.scale = wrapWidth / viewport.width;
+    pdfViewer.scale = Math.max(0.5, wrapWidth / viewport.width);
 
-    pdfModal.classList.remove('hidden');
     pdfCanvasWrap.scrollTop = 0;
     pdfCanvasWrap.scrollLeft = 0;
-    await renderPage(1);
+    await renderAllPages();
   } catch (e) {
     alert('Erreur lors du chargement du PDF : ' + e.message);
     closeViewer();
   }
 }
 
-async function renderPage(pageNum) {
+async function renderAllPages() {
   if (!pdfViewer.instance || pdfViewer.rendering) return;
 
-  // Clamp page number
-  pageNum = Math.max(1, Math.min(pageNum, pdfViewer.totalPages));
-  pdfViewer.page = pageNum;
-
   pdfViewer.rendering = true;
+  pdfCanvasWrap.innerHTML = '';
+  pdfViewer.canvases = [];
+
   try {
-    const page = await pdfViewer.instance.getPage(pageNum);
-    const viewport = page.getViewport({ scale: pdfViewer.scale });
+    for (let pageNum = 1; pageNum <= pdfViewer.totalPages; pageNum++) {
+      const page = await pdfViewer.instance.getPage(pageNum);
+      const viewport = page.getViewport({ scale: pdfViewer.scale });
 
-    pdfCanvas.width = viewport.width;
-    pdfCanvas.height = viewport.height;
-    pdfViewer.canvasWidth = viewport.width;
-    pdfViewer.canvasHeight = viewport.height;
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      canvas.style.display = 'block';
+      canvas.style.marginBottom = '1rem';
+      canvas.style.borderRadius = '4px';
+      canvas.style.boxShadow = '0 4px 20px rgba(0,0,0,.5)';
 
-    const ctx = pdfCanvas.getContext('2d');
-    await page.render({ canvasContext: ctx, viewport }).promise;
+      const ctx = canvas.getContext('2d');
+      await page.render({ canvasContext: ctx, viewport }).promise;
+
+      pdfCanvasWrap.appendChild(canvas);
+      pdfViewer.canvases.push(canvas);
+    }
   } catch (e) {
-    console.error('Error rendering page:', e);
+    console.error('Error rendering pages:', e);
   } finally {
     pdfViewer.rendering = false;
   }
@@ -109,10 +117,9 @@ function closeViewer() {
     pdfViewer.instance.destroy();
     pdfViewer.instance = null;
   }
-  pdfViewer.page = 1;
   pdfViewer.totalPages = 0;
-  pdfCanvas.width = 0;
-  pdfCanvas.height = 0;
+  pdfViewer.canvases = [];
+  pdfCanvasWrap.innerHTML = '';
 }
 
 async function downloadCurrent() {
@@ -220,17 +227,18 @@ async function init() {
     }
   });
 
-  // PDF Viewer — Mouse wheel for page navigation
-  pdfCanvasWrap.addEventListener('wheel', e => {
-    if (!pdfViewer.instance || pdfViewer.drag.active) return;
-    e.preventDefault();
-    // Scroll down = next page, scroll up = previous page
-    if (e.deltaY > 0 && pdfViewer.page < pdfViewer.totalPages) {
-      renderPage(pdfViewer.page + 1);
-    } else if (e.deltaY < 0 && pdfViewer.page > 1) {
-      renderPage(pdfViewer.page - 1);
-    }
-  }, { passive: false });
+  // PDF Viewer — Zoom buttons
+  pdfZoomInBtn.addEventListener('click', () => {
+    if (!pdfViewer.instance) return;
+    pdfViewer.scale = Math.min(3, pdfViewer.scale + 0.2);
+    renderAllPages();
+  });
+
+  pdfZoomOutBtn.addEventListener('click', () => {
+    if (!pdfViewer.instance) return;
+    pdfViewer.scale = Math.max(0.5, pdfViewer.scale - 0.2);
+    renderAllPages();
+  });
 
   // PDF Viewer — Drag to pan
   pdfCanvasWrap.addEventListener('mousedown', e => {

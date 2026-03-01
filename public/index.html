@@ -164,6 +164,10 @@
   <div id="pdf-modal" class="pdf-modal hidden" role="dialog" aria-modal="true">
     <div class="pdf-modal-inner" id="pdf-modal-inner">
       <div class="pdf-toolbar">
+        <div class="pdf-tb-left">
+          <button class="pdf-tool-btn" id="pdf-zoom-out" title="Réduire">−</button>
+          <button class="pdf-tool-btn" id="pdf-zoom-in" title="Agrandir">+</button>
+        </div>
         <div class="pdf-tb-center" id="pdf-title">Bulletin</div>
         <div class="pdf-tb-right">
           <button class="pdf-tool-btn pdf-dl-btn" id="pdf-save" title="Télécharger le PDF">
@@ -175,9 +179,7 @@
           <button class="pdf-tool-btn pdf-close-btn" id="pdf-close" title="Fermer (Echap)">&#x2715;</button>
         </div>
       </div>
-      <div class="pdf-canvas-wrap" id="pdf-canvas-wrap">
-        <canvas id="pdf-canvas"></canvas>
-      </div>
+      <div class="pdf-canvas-wrap" id="pdf-canvas-wrap"></div>
     </div>
   </div>
 

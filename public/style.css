@@ -575,7 +575,7 @@ footer {
   flex-shrink: 0;
 }
 
-.pdf-tb-right {
+.pdf-tb-left, .pdf-tb-right {
   display: flex;
   align-items: center;
   gap: .6rem;
@@ -637,24 +637,23 @@ footer {
 
 .pdf-canvas-wrap {
   flex: 1;
-  overflow: auto;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
   cursor: grab;
   background: #2a3a54;
   scroll-behavior: smooth;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .pdf-canvas-wrap.dragging {
   cursor: grabbing;
 }
 
-#pdf-canvas {
-  box-shadow: 0 4px 20px rgba(0,0,0,.5);
-  border-radius: 4px;
-  background: #fff;
-  display: block;
+.pdf-canvas-wrap canvas {
+  max-width: 100%;
+  height: auto;
 }
 
 /* ══════════════════════════════════════════════════════════
