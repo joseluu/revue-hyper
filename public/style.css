@@ -644,7 +644,7 @@ footer {
 .pdf-canvas-wrap {
   flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
   padding: 1rem;
   cursor: grab;
   background: #2a3a54;
@@ -655,11 +655,6 @@ footer {
 }
 .pdf-canvas-wrap.dragging {
   cursor: grabbing;
-}
-
-.pdf-canvas-wrap canvas {
-  max-width: 100%;
-  height: auto;
 }
 
 /* ══════════════════════════════════════════════════════════
