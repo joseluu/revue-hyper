@@ -63,15 +63,14 @@ async function openViewer(num, path) {
 
     pdfModal.classList.remove('hidden');
 
-    // Wait for modal to be rendered before calculating width
-    await new Promise(resolve => requestAnimationFrame(resolve));
+    // Wait two frames for the browser to fully layout the modal
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
-    // Calculate scale to fit width
+    // Calculate scale to fit width: available width = clientWidth minus padding (2×1rem) minus scrollbar (~14px)
     const firstPage = await pdfViewer.instance.getPage(1);
     const viewport = firstPage.getViewport({ scale: 1.0 });
-    // Calculate scale so the page width fits the canvas wrap width
-    const wrapWidth = pdfCanvasWrap.clientWidth - 32; // Account for padding
-    pdfViewer.scale = Math.max(0.5, wrapWidth / viewport.width);
+    const availableWidth = pdfCanvasWrap.clientWidth - 32 - 14;
+    pdfViewer.scale = Math.max(0.5, availableWidth / viewport.width);
 
     pdfCanvasWrap.scrollTop = 0;
     pdfCanvasWrap.scrollLeft = 0;
@@ -94,20 +93,26 @@ async function renderAllPages() {
       const page = await pdfViewer.instance.getPage(pageNum);
       const viewport = page.getViewport({ scale: pdfViewer.scale });
 
+      const wrapper = document.createElement('div');
+      wrapper.className = 'pdf-page-wrapper';
+      wrapper.style.marginBottom = '1rem';
+
       const canvas = document.createElement('canvas');
       canvas.width = viewport.width;
       canvas.height = viewport.height;
       canvas.style.display = 'block';
-      canvas.style.marginBottom = '1rem';
       canvas.style.borderRadius = '4px';
       canvas.style.boxShadow = '0 4px 20px rgba(0,0,0,.5)';
-      applyRotation(canvas);
+      canvas.style.transformOrigin = 'top left';
+
+      applyRotation(wrapper, canvas, viewport.width, viewport.height);
 
       const ctx = canvas.getContext('2d');
       await page.render({ canvasContext: ctx, viewport }).promise;
 
-      pdfCanvasWrap.appendChild(canvas);
-      pdfViewer.canvases.push(canvas);
+      wrapper.appendChild(canvas);
+      pdfCanvasWrap.appendChild(wrapper);
+      pdfViewer.canvases.push({ wrapper, canvas, w: viewport.width, h: viewport.height });
     }
   } catch (e) {
     console.error('Error rendering pages:', e);
@@ -116,11 +121,28 @@ async function renderAllPages() {
   }
 }
 
-function applyRotation(canvas) {
-  if (pdfViewer.rotation === 0) {
+function applyRotation(wrapper, canvas, w, h) {
+  const r = pdfViewer.rotation;
+  if (r === 0) {
+    wrapper.style.width = w + 'px';
+    wrapper.style.height = h + 'px';
+    wrapper.style.margin = '0 auto 1rem';
     canvas.style.transform = 'none';
-  } else {
-    canvas.style.transform = `rotate(${pdfViewer.rotation}deg)`;
+  } else if (r === 90) {
+    wrapper.style.width = h + 'px';
+    wrapper.style.height = w + 'px';
+    wrapper.style.margin = '0 auto 1rem';
+    canvas.style.transform = 'rotate(90deg) translateY(-100%)';
+  } else if (r === 180) {
+    wrapper.style.width = w + 'px';
+    wrapper.style.height = h + 'px';
+    wrapper.style.margin = '0 auto 1rem';
+    canvas.style.transform = 'rotate(180deg) translate(-100%, -100%)';
+  } else if (r === 270) {
+    wrapper.style.width = h + 'px';
+    wrapper.style.height = w + 'px';
+    wrapper.style.margin = '0 auto 1rem';
+    canvas.style.transform = 'rotate(270deg) translateX(-100%)';
   }
 }
 
@@ -257,13 +279,13 @@ async function init() {
   pdfRotateLeftBtn.addEventListener('click', () => {
     if (!pdfViewer.instance) return;
     pdfViewer.rotation = (pdfViewer.rotation - 90 + 360) % 360;
-    pdfViewer.canvases.forEach(canvas => applyRotation(canvas));
+    pdfViewer.canvases.forEach(c => applyRotation(c.wrapper, c.canvas, c.w, c.h));
   });
 
   pdfRotateRightBtn.addEventListener('click', () => {
     if (!pdfViewer.instance) return;
     pdfViewer.rotation = (pdfViewer.rotation + 90) % 360;
-    pdfViewer.canvases.forEach(canvas => applyRotation(canvas));
+    pdfViewer.canvases.forEach(c => applyRotation(c.wrapper, c.canvas, c.w, c.h));
   });
 
   // PDF Viewer — Drag to pan
@@ -296,12 +318,7 @@ async function init() {
     }
   });
 
-  // PDF Viewer — Close modal (click outside modal-inner)
-  pdfModal.addEventListener('click', e => {
-    if (e.target === pdfModal) {
-      closeViewer();
-    }
-  });
+  // PDF Viewer — Click on overlay does nothing (close only via X button or Escape)
 
   // PDF Viewer — Close button
   pdfCloseBtn.addEventListener('click', () => {

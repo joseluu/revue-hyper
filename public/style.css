@@ -643,21 +643,38 @@ footer {
 
 .pdf-canvas-wrap {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: auto;
+  overflow: auto;
   padding: 1rem;
   cursor: grab;
   background: #2a3a54;
-  scroll-behavior: smooth;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   user-select: none;
-  touch-action: none;
 }
 .pdf-canvas-wrap.dragging {
   cursor: grabbing;
-  scroll-behavior: auto;
+}
+
+.pdf-page-wrapper {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* Custom scrollbar for PDF viewer — vertical only */
+.pdf-canvas-wrap::-webkit-scrollbar:vertical {
+  width: 14px;
+}
+.pdf-canvas-wrap::-webkit-scrollbar-track:vertical {
+  background: #3a3a3a;
+  border-radius: 7px;
+}
+.pdf-canvas-wrap::-webkit-scrollbar-thumb:vertical {
+  background: #888;
+  border-radius: 7px;
+  border: 2px solid #3a3a3a;
+  min-height: 50px;
+}
+.pdf-canvas-wrap::-webkit-scrollbar-thumb:vertical:hover {
+  background: #aaa;
 }
 
 /* ══════════════════════════════════════════════════════════
