@@ -75,6 +75,13 @@ async function openViewer(num, path) {
     pdfCanvasWrap.scrollTop = 0;
     pdfCanvasWrap.scrollLeft = 0;
     await renderAllPages();
+
+    // Scroll to bottom of first page minus 100px (SOMMAIRE is there)
+    if (pdfViewer.canvases.length > 0) {
+      const firstWrapper = pdfViewer.canvases[0].wrapper;
+      const wrapperBottom = firstWrapper.offsetTop + firstWrapper.offsetHeight - pdfCanvasWrap.clientHeight - 100;
+      pdfCanvasWrap.scrollTop = Math.max(0, wrapperBottom);
+    }
   } catch (e) {
     alert('Erreur lors du chargement du PDF : ' + e.message);
     closeViewer();
