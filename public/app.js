@@ -5,6 +5,22 @@ let allArticles = [];
 let availableBulletins = new Set(); // numéros disponibles en téléchargement
 let currentSort = { key: null, dir: 1 }; // tri courant
 
+// ── PDF Viewer State ────────────────────────────────────────────────────────
+const pdfViewer = {
+  instance: null,       // PDFDocumentProxy
+  page: 1,
+  totalPages: 0,
+  scale: 1.5,
+  bulletinNum: null,
+  bulletinPath: null,
+  rendering: false,
+  drag: { active: false, startX: 0, startY: 0, origScrollLeft: 0, origScrollTop: 0 }
+};
+
+// Configure PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const qInput        = document.getElementById('q');
 const auteurInput   = document.getElementById('auteur');
@@ -17,6 +33,96 @@ const statusEl      = document.getElementById('status');
 const tbody         = document.getElementById('results-body');
 const noResults     = document.getElementById('no-results');
 const table         = document.getElementById('results-table');
+
+// PDF Viewer DOM refs
+const pdfModal       = document.getElementById('pdf-modal');
+const pdfModalInner  = document.getElementById('pdf-modal-inner');
+const pdfCanvas      = document.getElementById('pdf-canvas');
+const pdfCanvasWrap  = document.getElementById('pdf-canvas-wrap');
+const pdfTitle       = document.getElementById('pdf-title');
+const pdfPageInput   = document.getElementById('pdf-page-input');
+const pdfTotalPages  = document.getElementById('pdf-total-pages');
+const pdfPrevBtn     = document.getElementById('pdf-prev');
+const pdfNextBtn     = document.getElementById('pdf-next');
+const pdfSaveBtn     = document.getElementById('pdf-save');
+const pdfCloseBtn    = document.getElementById('pdf-close');
+
+// ── PDF Viewer Functions ───────────────────────────────────────────────────
+async function openViewer(num, path) {
+  pdfViewer.bulletinNum = num;
+  pdfViewer.bulletinPath = path || `/bulletins/${num}.pdf`;
+  pdfViewer.page = 1;
+  pdfViewer.scale = 1.5;
+  pdfTitle.textContent = `Bulletin N°${escHtml(num)}`;
+
+  try {
+    const resp = await fetch(pdfViewer.bulletinPath);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const arrayBuffer = await resp.arrayBuffer();
+    pdfViewer.instance = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    pdfViewer.totalPages = pdfViewer.instance.numPages;
+    pdfTotalPages.textContent = pdfViewer.totalPages;
+
+    pdfModal.classList.remove('hidden');
+    await renderPage(1);
+  } catch (e) {
+    alert('Erreur lors du chargement du PDF : ' + e.message);
+    closeViewer();
+  }
+}
+
+async function renderPage(pageNum) {
+  if (!pdfViewer.instance || pdfViewer.rendering) return;
+
+  // Clamp page number
+  pageNum = Math.max(1, Math.min(pageNum, pdfViewer.totalPages));
+  pdfViewer.page = pageNum;
+  pdfPageInput.value = pageNum;
+
+  pdfViewer.rendering = true;
+  try {
+    const page = await pdfViewer.instance.getPage(pageNum);
+    const viewport = page.getViewport({ scale: pdfViewer.scale });
+
+    pdfCanvas.width = viewport.width;
+    pdfCanvas.height = viewport.height;
+
+    const ctx = pdfCanvas.getContext('2d');
+    await page.render({ canvasContext: ctx, viewport }).promise;
+  } catch (e) {
+    console.error('Error rendering page:', e);
+  } finally {
+    pdfViewer.rendering = false;
+  }
+}
+
+function closeViewer() {
+  pdfModal.classList.add('hidden');
+  if (pdfViewer.instance) {
+    pdfViewer.instance.destroy();
+    pdfViewer.instance = null;
+  }
+  pdfViewer.page = 1;
+  pdfViewer.totalPages = 0;
+  pdfCanvas.width = 0;
+  pdfCanvas.height = 0;
+}
+
+async function downloadCurrent() {
+  try {
+    const resp = await fetch(pdfViewer.bulletinPath);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bulletin-${pdfViewer.bulletinNum}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    alert('Erreur lors du téléchargement : ' + e.message);
+  }
+}
 
 // ── Bootstrap ──────────────────────────────────────────────────────────────
 async function init() {
@@ -96,6 +202,89 @@ async function init() {
   qInput.addEventListener('input', () => {
     document.querySelectorAll('.freq-badge').forEach(b => b.classList.remove('active'));
   });
+
+  // PDF Viewer events — Delegation on tbody for .view-btn
+  tbody.addEventListener('click', e => {
+    const btn = e.target.closest('.view-btn');
+    if (btn) {
+      const num = btn.dataset.num;
+      const path = btn.dataset.path || `/bulletins/${num}.pdf`;
+      openViewer(num, path);
+    }
+  });
+
+  // PDF Viewer — Navigation buttons
+  pdfPrevBtn.addEventListener('click', () => {
+    renderPage(pdfViewer.page - 1);
+  });
+  pdfNextBtn.addEventListener('click', () => {
+    renderPage(pdfViewer.page + 1);
+  });
+
+  // PDF Viewer — Page input
+  pdfPageInput.addEventListener('change', () => {
+    const num = parseInt(pdfPageInput.value, 10);
+    if (!isNaN(num)) {
+      renderPage(num);
+    }
+  });
+
+  // PDF Viewer — Zoom via wheel
+  pdfCanvasWrap.addEventListener('wheel', e => {
+    if (!pdfViewer.instance) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.2 : 0.2;
+    pdfViewer.scale = Math.max(0.5, pdfViewer.scale + delta);
+    renderPage(pdfViewer.page);
+  }, { passive: false });
+
+  // PDF Viewer — Drag to pan
+  pdfCanvasWrap.addEventListener('mousedown', e => {
+    if (!pdfViewer.instance) return;
+    pdfViewer.drag.active = true;
+    pdfViewer.drag.startX = e.clientX;
+    pdfViewer.drag.startY = e.clientY;
+    pdfViewer.drag.origScrollLeft = pdfCanvasWrap.scrollLeft;
+    pdfViewer.drag.origScrollTop = pdfCanvasWrap.scrollTop;
+    pdfCanvasWrap.classList.add('dragging');
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!pdfViewer.drag.active) return;
+    const dx = e.clientX - pdfViewer.drag.startX;
+    const dy = e.clientY - pdfViewer.drag.startY;
+    pdfCanvasWrap.scrollLeft = pdfViewer.drag.origScrollLeft - dx;
+    pdfCanvasWrap.scrollTop = pdfViewer.drag.origScrollTop - dy;
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (pdfViewer.drag.active) {
+      pdfViewer.drag.active = false;
+      pdfCanvasWrap.classList.remove('dragging');
+    }
+  });
+
+  // PDF Viewer — Close modal (click outside modal-inner)
+  pdfModal.addEventListener('click', e => {
+    if (e.target === pdfModal) {
+      closeViewer();
+    }
+  });
+
+  // PDF Viewer — Close button
+  pdfCloseBtn.addEventListener('click', () => {
+    closeViewer();
+  });
+
+  // PDF Viewer — Escape key to close
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !pdfModal.classList.contains('hidden')) {
+      closeViewer();
+    }
+  });
+
+  // PDF Viewer — Download button
+  pdfSaveBtn.addEventListener('click', downloadCurrent);
 }
 
 // ── Populate filter dropdowns ──────────────────────────────────────────────
@@ -191,6 +380,16 @@ function renderResults(articles, terms) {
       <td>${highlight(a.auteur, terms.auteur)}</td>
       <td>${formatDate(a.date)}</td>
       <td class="col-bulletin"><span class="badge">N°&thinsp;${escHtml(a.bulletinNum)}</span></td>
+      <td class="col-view">${
+        availableBulletins.has(a.bulletinNum)
+        ? `<button class="view-btn" data-num="${escHtml(a.bulletinNum)}" data-path="${escHtml(a.bulletinPath || '')}" title="Visualiser le bulletin N°${escHtml(a.bulletinNum)}">
+             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+               <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+             </svg>
+             PDF
+           </button>`
+        : `<span class="dl-unavailable">—</span>`
+      }</td>
       <td class="col-dl">${
         availableBulletins.has(a.bulletinNum)
         ? `<a class="dl-btn" href="${escHtml(dlHref)}" download title="Télécharger le bulletin N°${escHtml(a.bulletinNum)}">

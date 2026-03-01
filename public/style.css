@@ -371,6 +371,7 @@ thead th {
 thead th:hover { background: rgba(255,255,255,.08); }
 thead th.sorted-asc::after  { content: ' ▲'; font-size: .65rem; opacity: .9; }
 thead th.sorted-desc::after { content: ' ▼'; font-size: .65rem; opacity: .9; }
+thead th.col-view { cursor: default; }
 thead th.col-dl { cursor: default; }
 
 /* Ligne de séparation en dessous du header */
@@ -401,6 +402,7 @@ tbody td {
 .col-auteur   { width: 8%;  white-space: nowrap; }
 .col-date     { width: 9%;  white-space: nowrap; }
 .col-bulletin { width: 8%;  text-align: center; white-space: nowrap; }
+.col-view     { width: 8%;  text-align: center; }
 .col-dl       { width: 9%;  text-align: center; }
 
 /* Styles spécifiques aux cellules tbody uniquement */
@@ -434,6 +436,30 @@ tbody td.col-date   { color: var(--muted); font-size: .83rem; }
   letter-spacing: .04em;
   border: 1px solid rgba(0,200,232,.25);
 }
+
+/* Bouton Visualiser */
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  background: linear-gradient(135deg, #0097b5, var(--cyan));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: .28rem .65rem;
+  font-size: .8rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s;
+  box-shadow: 0 2px 6px rgba(0,200,232,.25);
+  white-space: nowrap;
+}
+.view-btn:hover {
+  background: linear-gradient(135deg, #007a99, #00b0cc);
+  box-shadow: 0 4px 10px rgba(0,200,232,.35);
+}
+.view-btn svg { flex-shrink: 0; }
 
 /* Bouton de téléchargement */
 .dl-btn {
@@ -506,6 +532,150 @@ footer {
   justify-content: center;
 }
 .footer-sep { color: var(--cyan); opacity: .4; font-weight: 700; }
+
+/* ══════════════════════════════════════════════════════════
+   PDF MODAL & VIEWER
+   ══════════════════════════════════════════════════════════ */
+.pdf-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(11,30,61,.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.pdf-modal.hidden {
+  display: none;
+}
+
+.pdf-modal-inner {
+  background: #1a2740;
+  border-radius: 12px;
+  width: 90vw;
+  max-width: 1100px;
+  height: 90vh;
+  max-height: 820px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,.6);
+}
+
+.pdf-toolbar {
+  background: var(--navy);
+  border-bottom: 2px solid var(--cyan);
+  padding: .6rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.pdf-tb-left, .pdf-tb-right {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.pdf-tool-btn {
+  background: transparent;
+  color: var(--cyan);
+  border: 1px solid rgba(0,200,232,.35);
+  padding: .4rem .6rem;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background .15s, border-color .15s;
+  min-width: auto;
+}
+.pdf-tool-btn:hover {
+  background: rgba(0,200,232,.15);
+  border-color: var(--cyan);
+}
+
+.pdf-dl-btn {
+  background: linear-gradient(135deg, #d4730a, var(--amber));
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 6px rgba(245,158,11,.25);
+}
+.pdf-dl-btn:hover {
+  background: linear-gradient(135deg, #b8620a, #e89209);
+  box-shadow: 0 4px 10px rgba(245,158,11,.35);
+}
+
+.pdf-close-btn {
+  font-size: 1rem;
+  padding: .3rem .55rem;
+  color: #c85a54;
+  border-color: rgba(200,90,84,.35);
+}
+.pdf-close-btn:hover {
+  background: rgba(200,90,84,.15);
+  border-color: #c85a54;
+}
+
+.pdf-page-info {
+  color: #a8c4df;
+  font-size: .85rem;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+#pdf-page-input {
+  width: 3.5rem;
+  height: 1.8rem;
+  text-align: center;
+  border: 1px solid rgba(0,200,232,.35);
+  background: transparent;
+  color: var(--cyan);
+  border-radius: 4px;
+  font-size: .8rem;
+  font-weight: 700;
+  padding: 0 .3rem;
+}
+#pdf-page-input:focus {
+  outline: none;
+  border-color: var(--cyan);
+  box-shadow: 0 0 6px rgba(0,200,232,.35);
+}
+
+.pdf-tb-center {
+  color: var(--cyan);
+  font-weight: 700;
+  font-size: .9rem;
+  flex: 1;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.pdf-canvas-wrap {
+  flex: 1;
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 1rem;
+  cursor: grab;
+  background: #2a3a54;
+  scroll-behavior: smooth;
+}
+.pdf-canvas-wrap.dragging {
+  cursor: grabbing;
+}
+
+#pdf-canvas {
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  border-radius: 4px;
+  background: #fff;
+  display: block;
+}
 
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE
