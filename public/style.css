@@ -469,14 +469,17 @@ tbody td.col-date   { color: var(--muted); font-size: .83rem; }
   gap: .3rem;
   background: linear-gradient(135deg, #d4730a, var(--amber));
   color: #fff;
+  border: none;
   border-radius: var(--radius);
   padding: .28rem .65rem;
   font-size: .8rem;
   font-weight: 700;
   text-decoration: none;
+  cursor: pointer;
   transition: background .15s, box-shadow .15s;
   box-shadow: 0 2px 6px rgba(245,158,11,.25);
   white-space: nowrap;
+  height: auto;
 }
 .dl-btn:hover {
   background: linear-gradient(135deg, #b8620a, #e89209);
@@ -639,6 +642,36 @@ footer {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+
+.pdf-page-badges {
+  display: flex;
+  gap: .5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: .5rem;
+  padding: 0 1rem;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.pdf-page-badge {
+  display: inline-block;
+  background: rgba(0,200,232,.15);
+  color: var(--cyan);
+  border: 1px solid var(--cyan);
+  border-radius: 4px;
+  padding: .25rem .5rem;
+  font-size: .75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+
+.pdf-page-badge:hover {
+  background: rgba(0,200,232,.25);
+  box-shadow: 0 2px 8px rgba(0,200,232,.3);
 }
 
 .pdf-canvas-wrap {

@@ -125,6 +125,19 @@ function buildBulletinMap() {
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Markdown endpoint for SOMMAIRE parsing
+app.get('/api/markdown/:num', (req, res) => {
+  const num = req.params.num.replace(/\.md$/i, '');
+  const markdownPath = path.join(__dirname, 'markdown', `${num}.md`);
+
+  try {
+    const content = fs.readFileSync(markdownPath, 'utf8');
+    res.json({ content });
+  } catch (e) {
+    res.status(404).json({ error: 'Markdown file not found' });
+  }
+});
+
 // Liste des numéros de bulletins disponibles
 app.get('/api/bulletins', (req, res) => {
   const map = buildBulletinMap();

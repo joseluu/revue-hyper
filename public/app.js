@@ -47,6 +47,84 @@ const pdfRotateRightBtn = document.getElementById('pdf-rotate-right');
 const pdfSaveBtn     = document.getElementById('pdf-save');
 const pdfCloseBtn    = document.getElementById('pdf-close');
 
+// ── SOMMAIRE Parsing ───────────────────────────────────────────────────────
+function parseSommaire(markdownContent) {
+  // Find SOMMAIRE section and extract entries
+  const sommaireMatcher = /SOMMAIRE\n([\s\S]*?)(?:\n\n|$)/i;
+  const match = markdownContent.match(sommaireMatcher);
+
+  if (!match) return [];
+
+  const sommaire = match[1];
+  const entries = [];
+
+  // Match lines like: "- 1) Article Title ....... PAGE_NUMBER"
+  const lineRegex = /^-\s*(\d+)\)\s*(.+?)\s*\.{2,}\s*(\d+)\s*$/gm;
+  let lineMatch;
+
+  while ((lineMatch = lineRegex.exec(sommaire)) !== null) {
+    const num = lineMatch[1];
+    const title = lineMatch[2].trim();
+    const page = parseInt(lineMatch[3], 10);
+
+    entries.push({ num, title, page });
+  }
+
+  return entries;
+}
+
+async function displaySommairePages(bulletinNum) {
+  try {
+    const resp = await fetch(`/api/markdown/${bulletinNum}`);
+    if (!resp.ok) return; // Markdown not found, that's OK
+
+    const data = await resp.json();
+    const entries = parseSommaire(data.content);
+
+    if (entries.length === 0) return;
+
+    // Find or create the page badges container
+    const pdfTbCenter = document.querySelector('.pdf-tb-center');
+    let pageContainer = document.getElementById('pdf-page-badges');
+
+    if (!pageContainer) {
+      pageContainer = document.createElement('div');
+      pageContainer.id = 'pdf-page-badges';
+      pageContainer.className = 'pdf-page-badges';
+      pdfTbCenter.parentNode.insertBefore(pageContainer, pdfTbCenter.nextSibling);
+    }
+
+    // Clear previous badges
+    pageContainer.innerHTML = '';
+
+    // Create badge for each SOMMAIRE entry
+    entries.forEach(entry => {
+      const badge = document.createElement('button');
+      badge.className = 'pdf-page-badge';
+      badge.textContent = `P. ${entry.page}`;
+      badge.title = `${entry.num}. ${entry.title} (page ${entry.page})`;
+      badge.dataset.page = entry.page;
+
+      badge.addEventListener('click', () => {
+        // Jump to the specified page
+        if (pdfViewer.canvases.length > 0 && entry.page <= pdfViewer.totalPages) {
+          const targetPageIndex = Math.max(0, entry.page - 1);
+          const targetWrapper = pdfViewer.canvases[targetPageIndex]?.wrapper;
+          if (targetWrapper) {
+            const scrollTop = targetWrapper.offsetTop - pdfCanvasWrap.clientHeight / 2;
+            pdfCanvasWrap.scrollTop = Math.max(0, scrollTop);
+          }
+        }
+      });
+
+      pageContainer.appendChild(badge);
+    });
+  } catch (e) {
+    // Silently fail if markdown fetch fails
+    console.debug('SOMMAIRE parsing failed:', e);
+  }
+}
+
 // ── PDF Viewer Functions ───────────────────────────────────────────────────
 async function openViewer(num, path) {
   pdfViewer.bulletinNum = num;
@@ -75,6 +153,9 @@ async function openViewer(num, path) {
     pdfCanvasWrap.scrollTop = 0;
     pdfCanvasWrap.scrollLeft = 0;
     await renderAllPages();
+
+    // Display SOMMAIRE page badges
+    await displaySommairePages(num);
 
     // Scroll to bottom of first page minus 100px (SOMMAIRE is there)
     if (pdfViewer.canvases.length > 0) {
@@ -466,6 +547,18 @@ function renderResults(articles, terms) {
     : `${articles.length} article${articles.length > 1 ? 's' : ''} trouvé${articles.length > 1 ? 's' : ''} sur ${total}`;
 }
 
+// ── Frequency band cross-matching ──────────────────────────────────────────
+function getFrequencyAlternatives(freq) {
+  const normalized = normalize(freq);
+  // Map frequency bands to their alternatives
+  const frequencyMap = {
+    '24 ghz': ['24 ghz', '23 ghz'],    // 2.4 GHz matches 2.3 GHz
+    '241 ghz': ['241 ghz', '248 ghz']  // 241 GHz matches 248 GHz
+  };
+
+  return frequencyMap[normalized] || [normalized];
+}
+
 // ── Search ─────────────────────────────────────────────────────────────────
 function search() {
   const q        = qInput.value.trim();
@@ -481,8 +574,29 @@ function search() {
   // Split titre query into words for AND matching
   const words = normQ ? normQ.split(/\s+/) : [];
 
+  // Get frequency alternatives for cross-matching
+  const frequencyAlternatives = getFrequencyAlternatives(normQ);
+
   const filtered = allArticles.filter(a => {
-    if (words.length && !words.every(w => normalize(a.titre).includes(w))) return false;
+    if (words.length) {
+      // Check if article matches any frequency alternative or all words
+      const titreNorm = normalize(a.titre);
+      let matchesQuery = false;
+
+      // If we have frequency alternatives (cross-matching), check against them
+      if (frequencyAlternatives.length > 1) {
+        matchesQuery = frequencyAlternatives.some(freqAlt => {
+          const freqWords = freqAlt.split(/\s+/);
+          return freqWords.every(w => titreNorm.includes(w));
+        });
+      } else {
+        // Otherwise, all words must match (standard AND matching)
+        matchesQuery = words.every(w => titreNorm.includes(w));
+      }
+
+      if (!matchesQuery) return false;
+    }
+
     if (normAuteur  && !normalize(a.auteur).includes(normAuteur))  return false;
     if (rubrique    && a.rubrique !== rubrique)                     return false;
     if (annee       && String(a.year) !== annee)                   return false;
