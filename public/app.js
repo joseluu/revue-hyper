@@ -49,27 +49,57 @@ const pdfCloseBtn    = document.getElementById('pdf-close');
 
 // ── SOMMAIRE Parsing ───────────────────────────────────────────────────────
 function parseSommaire(markdownContent) {
-  // Find SOMMAIRE section and extract entries
-  const sommaireMatcher = /SOMMAIRE\n([\s\S]*?)(?:\n\n|$)/i;
-  const match = markdownContent.match(sommaireMatcher);
+  // Find SOMMAIRE position and extract a wide zone around it
+  // (the page list can be BEFORE or AFTER the word SOMMAIRE)
+  const somMatch = markdownContent.match(/SOMMAIRE/i);
+  if (!somMatch) return [];
 
-  if (!match) return [];
+  const pos = somMatch.index;
+  const zone = markdownContent.substring(
+    Math.max(0, pos - 3000),
+    Math.min(markdownContent.length, pos + 3000)
+  );
 
-  const sommaire = match[1];
   const entries = [];
+  const seenPages = new Set();
 
-  // Match lines like: "- 1) Article Title ....... PAGE_NUMBER"
-  const lineRegex = /^-\s*(\d+)\)\s*(.+?)\s*\.{2,}\s*(\d+)\s*$/gm;
-  let lineMatch;
-
-  while ((lineMatch = lineRegex.exec(sommaire)) !== null) {
-    const num = lineMatch[1];
-    const title = lineMatch[2].trim();
-    const page = parseInt(lineMatch[3], 10);
-
-    entries.push({ num, title, page });
+  function addPage(page) {
+    if (page >= 2 && page <= 50 && !seenPages.has(page)) {
+      seenPages.add(page);
+      entries.push({ page });
+    }
   }
 
+  // --- Strategy A: "- N) Titre ....... PAGE" ---
+  const aRegex = /^-\s*\d+\)\s*.+?\.{2,}\s*(\d+)\s*$/gm;
+  let m;
+  while ((m = aRegex.exec(zone)) !== null) addPage(parseInt(m[1], 10));
+
+  // --- Strategy B: "TITRE....PAGE" (3+ dots leader, at least 2 matches) ---
+  if (entries.length === 0) {
+    const bMatches = [];
+    const bRegex = /[A-ZÀ-Ÿ][^\n|]*?\.{3,}\s*(\d+)/g;
+    while ((m = bRegex.exec(zone)) !== null) bMatches.push(parseInt(m[1], 10));
+    if (bMatches.length >= 2) bMatches.forEach(p => addPage(p));
+  }
+
+  // --- Strategy C: Flexible P/p and "page" patterns ---
+  if (entries.length === 0) {
+    // C1: P/p with dash: P-3, P- 3, p-15
+    const c1Regex = /[Pp]\s*-\s*(\d+)/g;
+    while ((m = c1Regex.exec(zone)) !== null) addPage(parseInt(m[1], 10));
+
+    // C2: "page N" / "pages N" (most reliable)
+    const c2Regex = /pages?\s+(\d+)/gi;
+    while ((m = c2Regex.exec(zone)) !== null) addPage(parseInt(m[1], 10));
+
+    // C3: P/p at start of line or after | or <br> (without dash)
+    const c3Regex = /(?:^|[|\n]|<br\s*\/?>)\s*[Pp]\s*(\d+)/gm;
+    while ((m = c3Regex.exec(zone)) !== null) addPage(parseInt(m[1], 10));
+  }
+
+  // Sort by page number
+  entries.sort((a, b) => a.page - b.page);
   return entries;
 }
 
@@ -102,7 +132,7 @@ async function displaySommairePages(bulletinNum) {
       const badge = document.createElement('button');
       badge.className = 'pdf-page-badge';
       badge.textContent = `P. ${entry.page}`;
-      badge.title = `${entry.num}. ${entry.title} (page ${entry.page})`;
+      badge.title = `Page ${entry.page}`;
       badge.dataset.page = entry.page;
 
       badge.addEventListener('click', () => {
