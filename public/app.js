@@ -104,6 +104,10 @@ function parseSommaire(markdownContent) {
 }
 
 async function displaySommairePages(bulletinNum) {
+  // Clear previous badges immediately
+  const prevContainer = document.getElementById('pdf-page-badges');
+  if (prevContainer) prevContainer.innerHTML = '';
+
   try {
     const resp = await fetch(`/api/markdown/${bulletinNum}`);
     if (!resp.ok) return; // Markdown not found, that's OK
