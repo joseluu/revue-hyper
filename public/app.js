@@ -47,6 +47,7 @@ const pdfRotateLeftBtn  = document.getElementById('pdf-rotate-left');
 const pdfRotateRightBtn = document.getElementById('pdf-rotate-right');
 const pdfSaveBtn     = document.getElementById('pdf-save');
 const pdfCloseBtn    = document.getElementById('pdf-close');
+const pdfSidebarToggle = document.getElementById('pdf-sidebar-toggle');
 
 // ── SOMMAIRE Parsing ───────────────────────────────────────────────────────
 function parseSommaire(markdownContent) {
@@ -491,6 +492,13 @@ async function init() {
 
   // PDF Viewer — Download button
   pdfSaveBtn.addEventListener('click', downloadCurrent);
+
+  // PDF Viewer — Sidebar toggle
+  pdfSidebarToggle.addEventListener('click', () => {
+    const sidebar = document.getElementById('pdf-sidebar');
+    const collapsed = sidebar.classList.toggle('collapsed');
+    pdfSidebarToggle.textContent = collapsed ? '▶' : '◀';
+  });
 }
 
 // ── Populate filter dropdowns ──────────────────────────────────────────────

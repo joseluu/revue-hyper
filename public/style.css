@@ -648,6 +648,7 @@ footer {
   flex: 1;
   display: flex;
   overflow: hidden;
+  position: relative;
 }
 
 .pdf-sidebar {
@@ -658,10 +659,47 @@ footer {
   overflow-y: auto;
   padding: .5rem 0;
   flex-shrink: 0;
+  transition: width .2s, min-width .2s, padding .2s;
+}
+
+.pdf-sidebar.collapsed {
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+  border-right: none;
 }
 
 .pdf-sidebar:empty {
   display: none;
+}
+
+.pdf-sidebar-toggle {
+  position: absolute;
+  left: 220px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 22px;
+  height: 48px;
+  background: #0f1e36;
+  color: var(--cyan);
+  border: 1px solid rgba(0,200,232,.3);
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: .7rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: left .2s, background .15s;
+}
+.pdf-sidebar-toggle:hover {
+  background: rgba(0,200,232,.15);
+}
+.pdf-sidebar.collapsed ~ .pdf-sidebar-toggle {
+  left: 0;
 }
 
 .pdf-sidebar-entry {
