@@ -190,7 +190,7 @@ async function openViewer(num, path, articlePage) {
   document.getElementById('pdf-sidebar').innerHTML = '';
 
   try {
-    const resp = await fetch(pdfViewer.bulletinPath);
+    const resp = await fetch(pdfViewer.bulletinPath + '?src=view');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const arrayBuffer = await resp.arrayBuffer();
     pdfViewer.instance = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -316,7 +316,7 @@ function closeViewer() {
 
 async function downloadCurrent() {
   try {
-    const resp = await fetch(pdfViewer.bulletinPath);
+    const resp = await fetch(pdfViewer.bulletinPath + '?src=viewer');
     if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     const blob = await resp.blob();
     const url = URL.createObjectURL(blob);

@@ -35,7 +35,7 @@ function getCETTime() {
 }
 
 // Log download to file
-function logDownload(ip, filename, filesize, isBlocked = false) {
+function logDownload(ip, filename, filesize, isBlocked = false, source = '') {
   const logsDir = path.join(__dirname, 'logs');
   if (!fs.existsSync(logsDir)) {
     fs.mkdirSync(logsDir, { recursive: true });
@@ -44,7 +44,8 @@ function logDownload(ip, filename, filesize, isBlocked = false) {
   const logFile = path.join(logsDir, 'downloads.log');
   const timestamp = getCETTime();
   const status = isBlocked ? 'BLOCKED' : 'OK';
-  const logEntry = `${timestamp} | ${ip} | ${filename} | ${filesize} bytes | ${status}\n`;
+  const srcField = source ? ` | ${source}` : '';
+  const logEntry = `${timestamp} | ${ip} | ${filename} | ${filesize} bytes | ${status}${srcField}\n`;
 
   fs.appendFileSync(logFile, logEntry, 'utf8');
 }
@@ -193,6 +194,9 @@ app.get('/bulletins/:filename', (req, res) => {
     });
   }
 
+  // Source: 'view' (PDF viewer open), 'viewer' (download from viewer), or 'direct' (download link)
+  const source = req.query.src || 'direct';
+
   if (map[num]) {
     const filepath = path.join(bulletinsDir, map[num]);
 
@@ -203,7 +207,7 @@ app.get('/bulletins/:filename', (req, res) => {
 
       // Record the download
       const limitStatus = recordDownload(ip);
-      logDownload(ip, num + '.pdf', filesize, false);
+      logDownload(ip, num + '.pdf', filesize, false, source);
 
       if (limitStatus.limitExceeded) {
         // User just hit the limit - log it and inform them
