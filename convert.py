@@ -6,7 +6,7 @@ Convertit le fichier XLS d'index des articles en articles.json pour le site web.
 import xlrd, glob, json
 from pathlib import Path
 
-XLS_GLOB = "index_articles/*.xls"
+XLS_GLOB = "index_articles/Rubriques_avec_pages.xls"
 OUTPUT   = "public/articles.json"
 
 def main():
@@ -24,6 +24,11 @@ def main():
 
     months_fr = ['janvier','février','mars','avril','mai','juin',
                  'juillet','août','septembre','octobre','novembre','décembre']
+
+    # Check if 'page' column exists (column index 6)
+    has_page_col = sh.ncols > 6 and str(sh.cell_value(0, 6)).strip().lower() == 'page'
+    if has_page_col:
+        print("  Colonne 'page' détectée")
 
     articles = []
     for i in range(1, sh.nrows):
@@ -46,7 +51,17 @@ def main():
 
         bulletin_num = numero.replace('/bulletins/', '').replace('.pdf', '') if numero else ''
 
-        articles.append({
+        # Read page number if available
+        page = 0
+        if has_page_col:
+            raw_page = sh.cell_value(i, 6)
+            if raw_page and str(raw_page).strip():
+                try:
+                    page = int(float(raw_page))
+                except (ValueError, TypeError):
+                    page = 0
+
+        article = {
             'rubrique':    rubrique,
             'titre':       titre,
             'auteur':      auteur,
@@ -56,7 +71,10 @@ def main():
             'bulletinNum': bulletin_num,
             'bulletinPath': numero,
             'refnum':      int(refnum) if refnum else 0,
-        })
+        }
+        if page > 0:
+            article['page'] = page
+        articles.append(article)
 
     Path(OUTPUT).parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT, 'w', encoding='utf-8') as f:

@@ -115,26 +115,6 @@ function parseSommaire(markdownContent) {
   return entries;
 }
 
-// Match an article title against SOMMAIRE entries to find its page
-function findArticlePage(entries, articleTitle) {
-  if (!articleTitle || entries.length === 0) return 0;
-  const normTitle = normalize(articleTitle);
-  // Try matching: check if SOMMAIRE entry title contains significant words from article title
-  for (const entry of entries) {
-    if (!entry.title) continue;
-    const normEntry = normalize(entry.title);
-    // Match if entry title is contained in article title or vice versa
-    if (normTitle.includes(normEntry) || normEntry.includes(normTitle)) return entry.page;
-    // Match on significant words (3+ chars)
-    const entryWords = normEntry.split(/\s+/).filter(w => w.length >= 3);
-    if (entryWords.length >= 2) {
-      const matchCount = entryWords.filter(w => normTitle.includes(w)).length;
-      if (matchCount >= Math.ceil(entryWords.length * 0.6)) return entry.page;
-    }
-  }
-  return 0;
-}
-
 function scrollToPage(pageNum) {
   if (pdfViewer.canvases.length === 0 || pageNum > pdfViewer.totalPages) return;
   const idx = Math.max(0, pageNum - 1);
@@ -153,14 +133,14 @@ function scrollToSommaire() {
   }
 }
 
-async function populateSidebar(bulletinNum, articleTitle) {
+async function populateSidebar(bulletinNum) {
   const sidebar = document.getElementById('pdf-sidebar');
   sidebar.innerHTML = '';
   pdfViewer.sommaireEntries = [];
 
   try {
     const resp = await fetch(`/api/markdown/${bulletinNum}`);
-    if (!resp.ok) return 0;
+    if (!resp.ok) return;
 
     const data = await resp.json();
     const entries = parseSommaire(data.content);
@@ -193,17 +173,13 @@ async function populateSidebar(bulletinNum, articleTitle) {
       });
       sidebar.appendChild(btn);
     });
-
-    // Return the matched article page (0 if no match)
-    return findArticlePage(entries, articleTitle);
   } catch (e) {
     console.debug('SOMMAIRE parsing failed:', e);
-    return 0;
   }
 }
 
 // ── PDF Viewer Functions ───────────────────────────────────────────────────
-async function openViewer(num, path, articleTitle) {
+async function openViewer(num, path, articlePage) {
   pdfViewer.bulletinNum = num;
   pdfViewer.bulletinPath = path || `/bulletins/${num}.pdf`;
   pdfViewer.rotation = 0;  // Reset rotation for new PDF
@@ -234,19 +210,20 @@ async function openViewer(num, path, articleTitle) {
     pdfCanvasWrap.scrollLeft = 0;
     await renderAllPages();
 
-    // Populate sidebar and get matched article page
-    const matchedPage = await populateSidebar(num, articleTitle);
+    // Populate sidebar
+    await populateSidebar(num);
 
-    if (matchedPage > 0) {
+    if (articlePage > 0 && articlePage <= pdfViewer.totalPages) {
       // Jump directly to the article's page
-      scrollToPage(matchedPage);
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+      scrollToPage(articlePage);
       // Highlight the matching sidebar entry
       const sidebar = document.getElementById('pdf-sidebar');
       sidebar.querySelectorAll('.pdf-sidebar-entry').forEach(e => {
-        if (e.dataset.page === String(matchedPage)) e.classList.add('active');
+        if (e.dataset.page === String(articlePage)) e.classList.add('active');
       });
     } else {
-      // Default: scroll to SOMMAIRE (bottom of first page)
+      // No page number: scroll to SOMMAIRE (bottom of first page)
       scrollToSommaire();
       // Highlight the "Sommaire" entry
       const firstEntry = document.querySelector('.pdf-sidebar-entry');
@@ -437,8 +414,8 @@ async function init() {
     if (btn) {
       const num = btn.dataset.num;
       const path = btn.dataset.path || `/bulletins/${num}.pdf`;
-      const title = btn.dataset.title || '';
-      openViewer(num, path, title);
+      const articlePage = parseInt(btn.dataset.page, 10) || 0;
+      openViewer(num, path, articlePage);
     }
   });
 
@@ -611,7 +588,7 @@ function renderResults(articles, terms) {
       <td class="col-bulletin"><span class="badge">N°&thinsp;${escHtml(a.bulletinNum)}</span></td>
       <td class="col-view">${
         availableBulletins.has(a.bulletinNum)
-        ? `<button class="view-btn" data-num="${escHtml(a.bulletinNum)}" data-path="${escHtml(a.bulletinPath || '')}" data-title="${escHtml(a.titre)}" title="Visualiser le bulletin N°${escHtml(a.bulletinNum)}">
+        ? `<button class="view-btn" data-num="${escHtml(a.bulletinNum)}" data-path="${escHtml(a.bulletinPath || '')}" data-page="${a.page || 0}" title="Visualiser le bulletin N°${escHtml(a.bulletinNum)}">
              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
              </svg>
