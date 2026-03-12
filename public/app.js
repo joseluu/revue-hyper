@@ -15,7 +15,8 @@ const pdfViewer = {
   bulletinPath: null,
   rendering: false,
   canvases: [],         // Array of rendered canvases
-  drag: { active: false, startX: 0, startY: 0, origScrollLeft: 0, origScrollTop: 0 }
+  drag: { active: false, startX: 0, startY: 0, origScrollLeft: 0, origScrollTop: 0 },
+  sommaireEntries: []
 };
 
 // Configure PDF.js worker
@@ -63,24 +64,26 @@ function parseSommaire(markdownContent) {
   const entries = [];
   const seenPages = new Set();
 
-  function addPage(page) {
+  function addPage(page, title) {
     if (page >= 2 && page <= 50 && !seenPages.has(page)) {
       seenPages.add(page);
-      entries.push({ page });
+      entries.push({ page, title: title || '' });
     }
   }
 
   // --- Strategy A: "- N) Titre ....... PAGE" ---
-  const aRegex = /^-\s*\d+\)\s*.+?\.{2,}\s*(\d+)\s*$/gm;
+  const aRegex = /^-\s*\d+\)\s*(.+?)\s*\.{2,}\s*(\d+)\s*$/gm;
   let m;
-  while ((m = aRegex.exec(zone)) !== null) addPage(parseInt(m[1], 10));
+  while ((m = aRegex.exec(zone)) !== null) addPage(parseInt(m[2], 10), m[1].trim());
 
   // --- Strategy B: "TITRE....PAGE" (3+ dots leader, at least 2 matches) ---
   if (entries.length === 0) {
     const bMatches = [];
-    const bRegex = /[A-ZÀ-Ÿ][^\n|]*?\.{3,}\s*(\d+)/g;
-    while ((m = bRegex.exec(zone)) !== null) bMatches.push(parseInt(m[1], 10));
-    if (bMatches.length >= 2) bMatches.forEach(p => addPage(p));
+    const bRegex = /([A-ZÀ-Ÿ][^\n|]*?)\.{3,}\s*(\d+)/g;
+    while ((m = bRegex.exec(zone)) !== null) {
+      bMatches.push({ page: parseInt(m[2], 10), title: m[1].trim() });
+    }
+    if (bMatches.length >= 2) bMatches.forEach(e => addPage(e.page, e.title));
   }
 
   // --- Strategy C: Flexible P/p and "page" patterns ---
@@ -103,68 +106,102 @@ function parseSommaire(markdownContent) {
   return entries;
 }
 
-async function displaySommairePages(bulletinNum) {
-  // Clear previous badges immediately
-  const prevContainer = document.getElementById('pdf-page-badges');
-  if (prevContainer) prevContainer.innerHTML = '';
+// Match an article title against SOMMAIRE entries to find its page
+function findArticlePage(entries, articleTitle) {
+  if (!articleTitle || entries.length === 0) return 0;
+  const normTitle = normalize(articleTitle);
+  // Try matching: check if SOMMAIRE entry title contains significant words from article title
+  for (const entry of entries) {
+    if (!entry.title) continue;
+    const normEntry = normalize(entry.title);
+    // Match if entry title is contained in article title or vice versa
+    if (normTitle.includes(normEntry) || normEntry.includes(normTitle)) return entry.page;
+    // Match on significant words (3+ chars)
+    const entryWords = normEntry.split(/\s+/).filter(w => w.length >= 3);
+    if (entryWords.length >= 2) {
+      const matchCount = entryWords.filter(w => normTitle.includes(w)).length;
+      if (matchCount >= Math.ceil(entryWords.length * 0.6)) return entry.page;
+    }
+  }
+  return 0;
+}
+
+function scrollToPage(pageNum) {
+  if (pdfViewer.canvases.length === 0 || pageNum > pdfViewer.totalPages) return;
+  const idx = Math.max(0, pageNum - 1);
+  const wrapper = pdfViewer.canvases[idx]?.wrapper;
+  if (wrapper) {
+    pdfCanvasWrap.scrollTop = wrapper.offsetTop;
+  }
+}
+
+function scrollToSommaire() {
+  // Scroll to bottom of first page (SOMMAIRE is there)
+  if (pdfViewer.canvases.length > 0) {
+    const firstWrapper = pdfViewer.canvases[0].wrapper;
+    const wrapperBottom = firstWrapper.offsetTop + firstWrapper.offsetHeight - pdfCanvasWrap.clientHeight - 100;
+    pdfCanvasWrap.scrollTop = Math.max(0, wrapperBottom);
+  }
+}
+
+async function populateSidebar(bulletinNum, articleTitle) {
+  const sidebar = document.getElementById('pdf-sidebar');
+  sidebar.innerHTML = '';
+  pdfViewer.sommaireEntries = [];
 
   try {
     const resp = await fetch(`/api/markdown/${bulletinNum}`);
-    if (!resp.ok) return; // Markdown not found, that's OK
+    if (!resp.ok) return 0;
 
     const data = await resp.json();
     const entries = parseSommaire(data.content);
+    pdfViewer.sommaireEntries = entries;
 
-    if (entries.length === 0) return;
-
-    // Find or create the page badges container
-    const pdfTbCenter = document.querySelector('.pdf-tb-center');
-    let pageContainer = document.getElementById('pdf-page-badges');
-
-    if (!pageContainer) {
-      pageContainer = document.createElement('div');
-      pageContainer.id = 'pdf-page-badges';
-      pageContainer.className = 'pdf-page-badges';
-      pdfTbCenter.parentNode.insertBefore(pageContainer, pdfTbCenter.nextSibling);
-    }
-
-    // Clear previous badges
-    pageContainer.innerHTML = '';
-
-    // Create badge for each SOMMAIRE entry
-    entries.forEach(entry => {
-      const badge = document.createElement('button');
-      badge.className = 'pdf-page-badge';
-      badge.textContent = `P. ${entry.page}`;
-      badge.title = `Page ${entry.page}`;
-      badge.dataset.page = entry.page;
-
-      badge.addEventListener('click', () => {
-        // Jump to the specified page
-        if (pdfViewer.canvases.length > 0 && entry.page <= pdfViewer.totalPages) {
-          const targetPageIndex = Math.max(0, entry.page - 1);
-          const targetWrapper = pdfViewer.canvases[targetPageIndex]?.wrapper;
-          if (targetWrapper) {
-            const scrollTop = targetWrapper.offsetTop - pdfCanvasWrap.clientHeight / 2;
-            pdfCanvasWrap.scrollTop = Math.max(0, scrollTop);
-          }
-        }
-      });
-
-      pageContainer.appendChild(badge);
+    // "Sommaire" entry — always present, scrolls to bottom of page 1
+    const somBtn = document.createElement('button');
+    somBtn.className = 'pdf-sidebar-entry';
+    somBtn.innerHTML = '<span class="entry-page">P. 1</span><span class="entry-title">Sommaire</span>';
+    somBtn.addEventListener('click', () => {
+      sidebar.querySelectorAll('.pdf-sidebar-entry').forEach(e => e.classList.remove('active'));
+      somBtn.classList.add('active');
+      scrollToSommaire();
     });
+    sidebar.appendChild(somBtn);
+
+    // One entry per SOMMAIRE page
+    entries.forEach(entry => {
+      const btn = document.createElement('button');
+      btn.className = 'pdf-sidebar-entry';
+      btn.dataset.page = entry.page;
+      const titleText = entry.title || `Article`;
+      const shortTitle = titleText.length > 40 ? titleText.substring(0, 38) + '…' : titleText;
+      btn.innerHTML = `<span class="entry-page">P. ${entry.page}</span><span class="entry-title">${escHtml(shortTitle)}</span>`;
+      btn.title = titleText;
+      btn.addEventListener('click', () => {
+        sidebar.querySelectorAll('.pdf-sidebar-entry').forEach(e => e.classList.remove('active'));
+        btn.classList.add('active');
+        scrollToPage(entry.page);
+      });
+      sidebar.appendChild(btn);
+    });
+
+    // Return the matched article page (0 if no match)
+    return findArticlePage(entries, articleTitle);
   } catch (e) {
-    // Silently fail if markdown fetch fails
     console.debug('SOMMAIRE parsing failed:', e);
+    return 0;
   }
 }
 
 // ── PDF Viewer Functions ───────────────────────────────────────────────────
-async function openViewer(num, path) {
+async function openViewer(num, path, articleTitle) {
   pdfViewer.bulletinNum = num;
   pdfViewer.bulletinPath = path || `/bulletins/${num}.pdf`;
   pdfViewer.rotation = 0;  // Reset rotation for new PDF
   pdfTitle.textContent = `Bulletin N°${escHtml(num)}`;
+
+  // Clear sidebar immediately
+  document.getElementById('pdf-sidebar').innerHTML = '';
 
   try {
     const resp = await fetch(pdfViewer.bulletinPath);
@@ -188,14 +225,23 @@ async function openViewer(num, path) {
     pdfCanvasWrap.scrollLeft = 0;
     await renderAllPages();
 
-    // Display SOMMAIRE page badges
-    await displaySommairePages(num);
+    // Populate sidebar and get matched article page
+    const matchedPage = await populateSidebar(num, articleTitle);
 
-    // Scroll to bottom of first page minus 100px (SOMMAIRE is there)
-    if (pdfViewer.canvases.length > 0) {
-      const firstWrapper = pdfViewer.canvases[0].wrapper;
-      const wrapperBottom = firstWrapper.offsetTop + firstWrapper.offsetHeight - pdfCanvasWrap.clientHeight - 100;
-      pdfCanvasWrap.scrollTop = Math.max(0, wrapperBottom);
+    if (matchedPage > 0) {
+      // Jump directly to the article's page
+      scrollToPage(matchedPage);
+      // Highlight the matching sidebar entry
+      const sidebar = document.getElementById('pdf-sidebar');
+      sidebar.querySelectorAll('.pdf-sidebar-entry').forEach(e => {
+        if (e.dataset.page === String(matchedPage)) e.classList.add('active');
+      });
+    } else {
+      // Default: scroll to SOMMAIRE (bottom of first page)
+      scrollToSommaire();
+      // Highlight the "Sommaire" entry
+      const firstEntry = document.querySelector('.pdf-sidebar-entry');
+      if (firstEntry) firstEntry.classList.add('active');
     }
   } catch (e) {
     alert('Erreur lors du chargement du PDF : ' + e.message);
@@ -276,7 +322,9 @@ function closeViewer() {
   }
   pdfViewer.totalPages = 0;
   pdfViewer.canvases = [];
+  pdfViewer.sommaireEntries = [];
   pdfCanvasWrap.innerHTML = '';
+  document.getElementById('pdf-sidebar').innerHTML = '';
 }
 
 async function downloadCurrent() {
@@ -380,7 +428,8 @@ async function init() {
     if (btn) {
       const num = btn.dataset.num;
       const path = btn.dataset.path || `/bulletins/${num}.pdf`;
-      openViewer(num, path);
+      const title = btn.dataset.title || '';
+      openViewer(num, path, title);
     }
   });
 
@@ -553,7 +602,7 @@ function renderResults(articles, terms) {
       <td class="col-bulletin"><span class="badge">N°&thinsp;${escHtml(a.bulletinNum)}</span></td>
       <td class="col-view">${
         availableBulletins.has(a.bulletinNum)
-        ? `<button class="view-btn" data-num="${escHtml(a.bulletinNum)}" data-path="${escHtml(a.bulletinPath || '')}" title="Visualiser le bulletin N°${escHtml(a.bulletinNum)}">
+        ? `<button class="view-btn" data-num="${escHtml(a.bulletinNum)}" data-path="${escHtml(a.bulletinPath || '')}" data-title="${escHtml(a.titre)}" title="Visualiser le bulletin N°${escHtml(a.bulletinNum)}">
              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
              </svg>
