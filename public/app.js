@@ -88,17 +88,26 @@ function parseSommaire(markdownContent) {
 
   // --- Strategy C: Flexible P/p and "page" patterns ---
   if (entries.length === 0) {
-    // C1: P/p with dash: P-3, P- 3, p-15
-    const c1Regex = /[Pp]\s*-\s*(\d+)/g;
-    while ((m = c1Regex.exec(zone)) !== null) addPage(parseInt(m[1], 10));
+    // C1: P/p with dash: P-3, P- 3, p-15 — capture trailing title
+    const c1Regex = /[Pp]\s*-\s*(\d+)\s*(.*?)(?:<br|[|\n]|$)/g;
+    while ((m = c1Regex.exec(zone)) !== null) {
+      const title = m[2].replace(/\s+/g, ' ').trim();
+      addPage(parseInt(m[1], 10), title);
+    }
 
-    // C2: "page N" / "pages N" (most reliable)
-    const c2Regex = /pages?\s+(\d+)/gi;
-    while ((m = c2Regex.exec(zone)) !== null) addPage(parseInt(m[1], 10));
+    // C2: "page N titre" / "pages N titre" — capture trailing title
+    const c2Regex = /pages?\s+(\d+)\s*(.*?)(?:<br|[|\n]|$)/gi;
+    while ((m = c2Regex.exec(zone)) !== null) {
+      const title = m[2].replace(/\s+/g, ' ').trim();
+      addPage(parseInt(m[1], 10), title);
+    }
 
-    // C3: P/p at start of line or after | or <br> (without dash)
-    const c3Regex = /(?:^|[|\n]|<br\s*\/?>)\s*[Pp]\s*(\d+)/gm;
-    while ((m = c3Regex.exec(zone)) !== null) addPage(parseInt(m[1], 10));
+    // C3: P/p at start of line or after | or <br> (without dash) — capture trailing title
+    const c3Regex = /(?:^|[|\n]|<br\s*\/?>)\s*[Pp]\s*(\d+)\s*(.*?)(?:<br|[|\n]|$)/gm;
+    while ((m = c3Regex.exec(zone)) !== null) {
+      const title = m[2].replace(/\s+/g, ' ').trim();
+      addPage(parseInt(m[1], 10), title);
+    }
   }
 
   // Sort by page number
@@ -173,7 +182,7 @@ async function populateSidebar(bulletinNum, articleTitle) {
       const btn = document.createElement('button');
       btn.className = 'pdf-sidebar-entry';
       btn.dataset.page = entry.page;
-      const titleText = entry.title || `Article`;
+      const titleText = entry.title || `Page ${entry.page}`;
       const shortTitle = titleText.length > 40 ? titleText.substring(0, 38) + '…' : titleText;
       btn.innerHTML = `<span class="entry-page">P. ${entry.page}</span><span class="entry-title">${escHtml(shortTitle)}</span>`;
       btn.title = titleText;
