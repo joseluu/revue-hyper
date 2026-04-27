@@ -1,49 +1,48 @@
 #!/usr/bin/env python3
 """
-Convertit le fichier XLS d'index des articles en articles.json pour le site web.
-À relancer à chaque mise à jour du fichier XLS.
+Convertit le fichier CSV d'index des articles en articles.json pour le site web.
+À relancer à chaque mise à jour du fichier CSV.
+
+Usage:
+    .venv/bin/python3 convert.py [path/to/index.csv]
 """
-import xlrd, glob, json
+import sys, csv, json
+from datetime import datetime
 from pathlib import Path
 
-XLS_GLOB = "index_articles/Rubriques_avec_pages.xls"
-OUTPUT   = "public/articles.json"
+DEFAULT_CSV = "index_articles/Rubriques Revue Hyper jusqu`à décembre 2025_2026-03-22.csv"
+OUTPUT      = "public/articles.json"
+
+MONTHS_FR = ['janvier','février','mars','avril','mai','juin',
+             'juillet','août','septembre','octobre','novembre','décembre']
+
 
 def main():
-    files = glob.glob(XLS_GLOB)
-    if not files:
-        print(f"Aucun fichier .xls trouvé dans {XLS_GLOB}")
-        return
+    csv_path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CSV
+    print(f"Lecture de : {csv_path}")
 
-    xls_path = files[0]
-    print(f"Lecture de : {xls_path}")
+    with open(csv_path, encoding='cp1252', newline='') as f:
+        rows = list(csv.reader(f, delimiter='\t'))
 
-    wb = xlrd.open_workbook(xls_path)
-    sh = wb.sheets()[0]
-    print(f"  {sh.nrows - 1} articles, {sh.ncols} colonnes")
+    header, body = rows[0], rows[1:]
+    print(f"  {len(body)} articles, {len(header)} colonnes")
+    has_page = 'page' in header
 
-    months_fr = ['janvier','février','mars','avril','mai','juin',
-                 'juillet','août','septembre','octobre','novembre','décembre']
-
-    # Check if 'page' column exists (column index 6)
-    has_page_col = sh.ncols > 6 and str(sh.cell_value(0, 6)).strip().lower() == 'page'
-    if has_page_col:
-        print("  Colonne 'page' détectée")
+    idx = {name: header.index(name) for name in header}
 
     articles = []
-    for i in range(1, sh.nrows):
-        rubrique = str(sh.cell_value(i, 0)).strip()
-        titre    = str(sh.cell_value(i, 1)).strip()
-        auteur   = str(sh.cell_value(i, 2)).strip()
-        raw_date = sh.cell_value(i, 3)
-        refnum   = sh.cell_value(i, 4)
-        numero   = str(sh.cell_value(i, 5)).strip()
+    for r in body:
+        rubrique = r[idx['rubrique']].strip()
+        titre    = r[idx['titre']].strip()
+        auteur   = r[idx['auteur']].strip()
+        raw_date = r[idx['date']].strip()
+        refnum   = r[idx['refnum']].strip()
+        numero   = r[idx['numero']].strip()
 
         if raw_date:
-            from xlrd import xldate_as_datetime
-            dt = xldate_as_datetime(raw_date, wb.datemode)
+            dt = datetime.strptime(raw_date, '%m/%d/%Y')
             date_str     = dt.strftime('%Y-%m-%d')
-            date_display = f"{months_fr[dt.month - 1]} {dt.year}"
+            date_display = f"{MONTHS_FR[dt.month - 1]} {dt.year}"
             year         = dt.year
         else:
             date_str = date_display = ''
@@ -51,14 +50,13 @@ def main():
 
         bulletin_num = numero.replace('/bulletins/', '').replace('.pdf', '') if numero else ''
 
-        # Read page number if available
         page = 0
-        if has_page_col:
-            raw_page = sh.cell_value(i, 6)
-            if raw_page and str(raw_page).strip():
+        if has_page:
+            raw_page = r[idx['page']].strip()
+            if raw_page:
                 try:
                     page = int(float(raw_page))
-                except (ValueError, TypeError):
+                except ValueError:
                     page = 0
 
         article = {
@@ -81,6 +79,7 @@ def main():
         json.dump(articles, f, ensure_ascii=False, indent=2)
 
     print(f"Écrit : {OUTPUT} ({len(articles)} articles)")
+
 
 if __name__ == '__main__':
     main()

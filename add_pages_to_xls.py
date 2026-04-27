@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 """
-Ajoute une colonne 'page' au fichier XLS en utilisant le parsing SOMMAIRE des markdown.
-Matching amélioré: substring exact + scoring par mots communs.
-Génère un nouveau fichier XLS avec la colonne page pré-remplie (663/900).
-"""
-import re, os, glob, unicodedata
-import xlrd, xlwt
+Fills the 'page' column of an index CSV in place from SOMMAIRE markdown extraction.
 
-XLS_INPUT = "index_articles/Rubriques Revue Hyper jusqu`à décembre 2024.xls"
-XLS_OUTPUT = "index_articles/Rubriques_avec_pages.xls"
+Only fills rows where 'page' is currently empty — existing values are preserved.
+For each remaining article, parses markdown/<numero>.md to extract a SOMMAIRE
+table of contents (3 fallback strategies) and matches the article title against
+the entries (exact substring + word-overlap scoring).
+
+Usage:
+    .venv/bin/python3 add_pages_to_xls.py [path/to/index.csv]
+
+Defaults to the current working CSV if no path is given.
+"""
+import sys, csv, os, re, unicodedata
+
+DEFAULT_CSV = "index_articles/Rubriques Revue Hyper jusqu`à décembre 2025_2026-03-22.csv"
 MD_DIR = "markdown"
 
 
@@ -19,7 +25,7 @@ def normalize(s):
 def parse_sommaire(md_path):
     if not os.path.exists(md_path):
         return []
-    content = open(md_path).read()
+    content = open(md_path, encoding='utf-8').read()
     som = re.search(r'SOMMAIRE', content, re.IGNORECASE)
     if not som:
         return []
@@ -90,57 +96,55 @@ def find_best_match(entries, article_title):
 
 
 def main():
-    print(f"Lecture de : {XLS_INPUT}")
-    wb_in = xlrd.open_workbook(XLS_INPUT)
-    sh = wb_in.sheets()[0]
+    csv_path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_CSV
+    print(f"File to alter: {csv_path}")
+
+    with open(csv_path, encoding='cp1252', newline='') as f:
+        rows = list(csv.reader(f, delimiter='\t'))
+
+    header, body = rows[0], rows[1:]
+    if 'page' not in header:
+        header = header + ['page']
+        body = [r + [''] for r in body]
+
+    page_idx   = header.index('page')
+    titre_idx  = header.index('titre')
+    numero_idx = header.index('numero')
+
+    filled_before = sum(1 for r in body if r[page_idx].strip())
     cache = {}
+    newly_filled = 0
+    no_md = no_match = 0
 
-    wb_out = xlwt.Workbook(encoding='utf-8')
-    ws = wb_out.add_sheet('Articles')
-
-    # Date format for xlwt
-    date_fmt = xlwt.XFStyle()
-    date_fmt.num_format_str = 'DD/MM/YYYY'
-
-    # Header
-    headers = [sh.cell_value(0, c) for c in range(sh.ncols)] + ['page']
-    for c, h in enumerate(headers):
-        ws.write(0, c, h)
-
-    matched = 0
-    total = 0
-
-    for i in range(1, sh.nrows):
-        # Copy existing columns
-        for c in range(sh.ncols):
-            val = sh.cell_value(i, c)
-            cell_type = sh.cell_type(i, c)
-            if cell_type == xlrd.XL_CELL_DATE:
-                ws.write(i, c, val, date_fmt)
-            elif cell_type == xlrd.XL_CELL_NUMBER:
-                ws.write(i, c, val)
-            else:
-                ws.write(i, c, val)
-
-        titre = str(sh.cell_value(i, 1)).strip()
-        numero = str(sh.cell_value(i, 5)).strip().replace('/bulletins/', '').replace('.pdf', '')
-
+    for r in body:
+        if r[page_idx].strip():
+            continue
+        numero = r[numero_idx].replace('/bulletins/', '').replace('.pdf', '').strip()
         if numero not in cache:
             cache[numero] = parse_sommaire(os.path.join(MD_DIR, f"{numero}.md"))
-
-        page = find_best_match(cache[numero], titre)
-        total += 1
-
+        if not cache[numero]:
+            no_md += 1
+            continue
+        page = find_best_match(cache[numero], r[titre_idx].strip())
         if page > 0:
-            ws.write(i, sh.ncols, page)
-            matched += 1
+            r[page_idx] = str(page)
+            newly_filled += 1
         else:
-            ws.write(i, sh.ncols, '')
+            no_match += 1
 
-    wb_out.save(XLS_OUTPUT)
-    print(f"\nÉcrit : {XLS_OUTPUT}")
-    print(f"Articles avec page trouvée : {matched}/{total} ({100*matched/total:.1f}%)")
-    print(f"Articles sans page (à compléter manuellement) : {total - matched}")
+    with open(csv_path, 'w', encoding='cp1252', newline='') as f:
+        w = csv.writer(f, delimiter='\t', lineterminator='\r\n')
+        w.writerow(header)
+        w.writerows(body)
+
+    total = len(body)
+    filled_after = sum(1 for r in body if r[page_idx].strip())
+    print(f"Total articles      : {total}")
+    print(f"Already had page    : {filled_before}")
+    print(f"Newly filled        : {newly_filled}")
+    print(f"No SOMMAIRE found   : {no_md}")
+    print(f"SOMMAIRE, no match  : {no_match}")
+    print(f"Total with page now : {filled_after} ({100*filled_after/total:.1f}%)")
 
 
 if __name__ == '__main__':
