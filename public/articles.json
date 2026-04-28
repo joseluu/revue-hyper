@@ -2266,7 +2266,8 @@
     "year": 2001,
     "bulletinNum": "59",
     "bulletinPath": "/bulletins/59.pdf",
-    "refnum": 59
+    "refnum": 59,
+    "page": 5
   },
   {
     "rubrique": "Appareils de mesures et mesures",
@@ -2289,7 +2290,8 @@
     "year": 2001,
     "bulletinNum": "59",
     "bulletinPath": "/bulletins/59.pdf",
-    "refnum": 59
+    "refnum": 59,
+    "page": 14
   },
   {
     "rubrique": "Antennes - Lignes",
@@ -2300,7 +2302,8 @@
     "year": 2001,
     "bulletinNum": "59",
     "bulletinPath": "/bulletins/59.pdf",
-    "refnum": 59
+    "refnum": 59,
+    "page": 15
   },
   {
     "rubrique": "Antennes - Lignes",
@@ -2311,7 +2314,8 @@
     "year": 2001,
     "bulletinNum": "59",
     "bulletinPath": "/bulletins/59.pdf",
-    "refnum": 59
+    "refnum": 59,
+    "page": 15
   },
   {
     "rubrique": "Trafic - Propagation - Organisation",
