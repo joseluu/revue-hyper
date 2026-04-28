@@ -149,7 +149,8 @@
     "year": 1997,
     "bulletinNum": "8",
     "bulletinPath": "/bulletins/8.pdf",
-    "refnum": 8
+    "refnum": 8,
+    "page": 7
   },
   {
     "rubrique": "Assemblage - Accessoires - Mécanique",
@@ -160,7 +161,8 @@
     "year": 1997,
     "bulletinNum": "8",
     "bulletinPath": "/bulletins/8.pdf",
-    "refnum": 8
+    "refnum": 8,
+    "page": 12
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -171,7 +173,8 @@
     "year": 1997,
     "bulletinNum": "9",
     "bulletinPath": "/bulletins/9.pdf",
-    "refnum": 9
+    "refnum": 9,
+    "page": 5
   },
   {
     "rubrique": "Antennes - Lignes",
@@ -182,7 +185,8 @@
     "year": 1997,
     "bulletinNum": "9",
     "bulletinPath": "/bulletins/9.pdf",
-    "refnum": 9
+    "refnum": 9,
+    "page": 9
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3076,7 +3080,8 @@
     "year": 2002,
     "bulletinNum": "77",
     "bulletinPath": "/bulletins/77.pdf",
-    "refnum": 77
+    "refnum": 77,
+    "page": 5
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3087,7 +3092,8 @@
     "year": 2002,
     "bulletinNum": "77",
     "bulletinPath": "/bulletins/77.pdf",
-    "refnum": 77
+    "refnum": 77,
+    "page": 15
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3098,7 +3104,8 @@
     "year": 2002,
     "bulletinNum": "77",
     "bulletinPath": "/bulletins/77.pdf",
-    "refnum": 77
+    "refnum": 77,
+    "page": 10
   },
   {
     "rubrique": "Appareils de mesures et mesures",
@@ -3109,7 +3116,8 @@
     "year": 2002,
     "bulletinNum": "77",
     "bulletinPath": "/bulletins/77.pdf",
-    "refnum": 77
+    "refnum": 77,
+    "page": 9
   },
   {
     "rubrique": "Antennes - Lignes",
@@ -3120,7 +3128,8 @@
     "year": 2002,
     "bulletinNum": "77",
     "bulletinPath": "/bulletins/77.pdf",
-    "refnum": 77
+    "refnum": 77,
+    "page": 20
   },
   {
     "rubrique": "Trafic - Propagation - Organisation",
@@ -3131,7 +3140,8 @@
     "year": 2003,
     "bulletinNum": "78",
     "bulletinPath": "/bulletins/78.pdf",
-    "refnum": 78
+    "refnum": 78,
+    "page": 11
   },
   {
     "rubrique": "Sous-ensembles - Composants",
@@ -3142,7 +3152,8 @@
     "year": 2003,
     "bulletinNum": "78",
     "bulletinPath": "/bulletins/78.pdf",
-    "refnum": 78
+    "refnum": 78,
+    "page": 12
   },
   {
     "rubrique": "Appareils de mesures et mesures",
@@ -3153,7 +3164,8 @@
     "year": 2003,
     "bulletinNum": "78",
     "bulletinPath": "/bulletins/78.pdf",
-    "refnum": 78
+    "refnum": 78,
+    "page": 14
   },
   {
     "rubrique": "Transceivers - Transverters - Convertisseurs",
@@ -3164,7 +3176,8 @@
     "year": 2003,
     "bulletinNum": "79",
     "bulletinPath": "/bulletins/79.pdf",
-    "refnum": 79
+    "refnum": 79,
+    "page": 9
   },
   {
     "rubrique": "Sous-ensembles - Composants",
@@ -3175,7 +3188,8 @@
     "year": 2003,
     "bulletinNum": "79",
     "bulletinPath": "/bulletins/79.pdf",
-    "refnum": 79
+    "refnum": 79,
+    "page": 6
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3186,7 +3200,8 @@
     "year": 2003,
     "bulletinNum": "79",
     "bulletinPath": "/bulletins/79.pdf",
-    "refnum": 79
+    "refnum": 79,
+    "page": 13
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3197,7 +3212,8 @@
     "year": 2003,
     "bulletinNum": "80",
     "bulletinPath": "/bulletins/80.pdf",
-    "refnum": 80
+    "refnum": 80,
+    "page": 5
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3208,7 +3224,8 @@
     "year": 2003,
     "bulletinNum": "80",
     "bulletinPath": "/bulletins/80.pdf",
-    "refnum": 80
+    "refnum": 80,
+    "page": 11
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3219,7 +3236,8 @@
     "year": 2003,
     "bulletinNum": "80",
     "bulletinPath": "/bulletins/80.pdf",
-    "refnum": 80
+    "refnum": 80,
+    "page": 11
   },
   {
     "rubrique": "Optique",
@@ -3230,7 +3248,8 @@
     "year": 2003,
     "bulletinNum": "80",
     "bulletinPath": "/bulletins/80.pdf",
-    "refnum": 80
+    "refnum": 80,
+    "page": 11
   },
   {
     "rubrique": "Sous-ensembles - Composants",
@@ -3241,7 +3260,8 @@
     "year": 2003,
     "bulletinNum": "81",
     "bulletinPath": "/bulletins/81.pdf",
-    "refnum": 81
+    "refnum": 81,
+    "page": 5
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3252,7 +3272,8 @@
     "year": 2003,
     "bulletinNum": "81",
     "bulletinPath": "/bulletins/81.pdf",
-    "refnum": 81
+    "refnum": 81,
+    "page": 5
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3263,7 +3284,8 @@
     "year": 2003,
     "bulletinNum": "81",
     "bulletinPath": "/bulletins/81.pdf",
-    "refnum": 81
+    "refnum": 81,
+    "page": 5
   },
   {
     "rubrique": "Transceivers - Transverters - Convertisseurs",
@@ -3274,7 +3296,8 @@
     "year": 2003,
     "bulletinNum": "82",
     "bulletinPath": "/bulletins/82.pdf",
-    "refnum": 82
+    "refnum": 82,
+    "page": 8
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3285,7 +3308,8 @@
     "year": 2003,
     "bulletinNum": "82",
     "bulletinPath": "/bulletins/82.pdf",
-    "refnum": 82
+    "refnum": 82,
+    "page": 16
   },
   {
     "rubrique": "Assemblage - Accessoires - Mécanique",
@@ -3296,7 +3320,8 @@
     "year": 2003,
     "bulletinNum": "82",
     "bulletinPath": "/bulletins/82.pdf",
-    "refnum": 82
+    "refnum": 82,
+    "page": 6
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3307,7 +3332,8 @@
     "year": 2003,
     "bulletinNum": "83",
     "bulletinPath": "/bulletins/83.pdf",
-    "refnum": 83
+    "refnum": 83,
+    "page": 4
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3318,7 +3344,8 @@
     "year": 2003,
     "bulletinNum": "83",
     "bulletinPath": "/bulletins/83.pdf",
-    "refnum": 83
+    "refnum": 83,
+    "page": 4
   },
   {
     "rubrique": "Antennes - Lignes",
@@ -3329,7 +3356,8 @@
     "year": 2003,
     "bulletinNum": "83",
     "bulletinPath": "/bulletins/83.pdf",
-    "refnum": 83
+    "refnum": 83,
+    "page": 4
   },
   {
     "rubrique": "Antennes - Lignes",
@@ -3340,7 +3368,8 @@
     "year": 2003,
     "bulletinNum": "83",
     "bulletinPath": "/bulletins/83.pdf",
-    "refnum": 83
+    "refnum": 83,
+    "page": 4
   },
   {
     "rubrique": "Sous-ensembles - Composants",
@@ -3406,7 +3435,8 @@
     "year": 2003,
     "bulletinNum": "85",
     "bulletinPath": "/bulletins/85.pdf",
-    "refnum": 85
+    "refnum": 85,
+    "page": 5
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3417,7 +3447,8 @@
     "year": 2003,
     "bulletinNum": "85",
     "bulletinPath": "/bulletins/85.pdf",
-    "refnum": 85
+    "refnum": 85,
+    "page": 5
   },
   {
     "rubrique": "Balises",
@@ -3428,7 +3459,8 @@
     "year": 2003,
     "bulletinNum": "85",
     "bulletinPath": "/bulletins/85.pdf",
-    "refnum": 85
+    "refnum": 85,
+    "page": 5
   },
   {
     "rubrique": "Antennes - Lignes",
@@ -3439,7 +3471,8 @@
     "year": 2003,
     "bulletinNum": "85",
     "bulletinPath": "/bulletins/85.pdf",
-    "refnum": 85
+    "refnum": 85,
+    "page": 5
   },
   {
     "rubrique": "Transceivers - Transverters - Convertisseurs",
@@ -3483,7 +3516,8 @@
     "year": 2003,
     "bulletinNum": "87",
     "bulletinPath": "/bulletins/87.pdf",
-    "refnum": 87
+    "refnum": 87,
+    "page": 11
   },
   {
     "rubrique": "Sous-ensembles - Composants",
@@ -3494,7 +3528,8 @@
     "year": 2003,
     "bulletinNum": "88",
     "bulletinPath": "/bulletins/88.pdf",
-    "refnum": 88
+    "refnum": 88,
+    "page": 16
   },
   {
     "rubrique": "Appareils de mesures et mesures",
@@ -3505,7 +3540,8 @@
     "year": 2003,
     "bulletinNum": "88",
     "bulletinPath": "/bulletins/88.pdf",
-    "refnum": 88
+    "refnum": 88,
+    "page": 15
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3560,7 +3596,8 @@
     "year": 2004,
     "bulletinNum": "90",
     "bulletinPath": "/bulletins/90.pdf",
-    "refnum": 90
+    "refnum": 90,
+    "page": 8
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3571,7 +3608,8 @@
     "year": 2004,
     "bulletinNum": "90",
     "bulletinPath": "/bulletins/90.pdf",
-    "refnum": 90
+    "refnum": 90,
+    "page": 8
   },
   {
     "rubrique": "Optique",
@@ -3582,7 +3620,8 @@
     "year": 2004,
     "bulletinNum": "90",
     "bulletinPath": "/bulletins/90.pdf",
-    "refnum": 90
+    "refnum": 90,
+    "page": 8
   },
   {
     "rubrique": "Appareils de mesures et mesures",
@@ -3593,7 +3632,8 @@
     "year": 2004,
     "bulletinNum": "90",
     "bulletinPath": "/bulletins/90.pdf",
-    "refnum": 90
+    "refnum": 90,
+    "page": 8
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3604,7 +3644,8 @@
     "year": 2004,
     "bulletinNum": "91",
     "bulletinPath": "/bulletins/91.pdf",
-    "refnum": 91
+    "refnum": 91,
+    "page": 4
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3615,7 +3656,8 @@
     "year": 2004,
     "bulletinNum": "91",
     "bulletinPath": "/bulletins/91.pdf",
-    "refnum": 91
+    "refnum": 91,
+    "page": 4
   },
   {
     "rubrique": "Oscillateurs - OL",
@@ -3626,7 +3668,8 @@
     "year": 2004,
     "bulletinNum": "91",
     "bulletinPath": "/bulletins/91.pdf",
-    "refnum": 91
+    "refnum": 91,
+    "page": 4
   },
   {
     "rubrique": "Antennes - Lignes",
@@ -3637,7 +3680,8 @@
     "year": 2004,
     "bulletinNum": "91",
     "bulletinPath": "/bulletins/91.pdf",
-    "refnum": 91
+    "refnum": 91,
+    "page": 4
   },
   {
     "rubrique": "Optique",
@@ -3648,7 +3692,8 @@
     "year": 2004,
     "bulletinNum": "92",
     "bulletinPath": "/bulletins/92.pdf",
-    "refnum": 92
+    "refnum": 92,
+    "page": 6
   },
   {
     "rubrique": "Alimentations",
@@ -3659,7 +3704,8 @@
     "year": 2004,
     "bulletinNum": "92",
     "bulletinPath": "/bulletins/92.pdf",
-    "refnum": 92
+    "refnum": 92,
+    "page": 6
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3670,7 +3716,8 @@
     "year": 2004,
     "bulletinNum": "93",
     "bulletinPath": "/bulletins/93.pdf",
-    "refnum": 93
+    "refnum": 93,
+    "page": 4
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3681,7 +3728,8 @@
     "year": 2004,
     "bulletinNum": "94",
     "bulletinPath": "/bulletins/94.pdf",
-    "refnum": 94
+    "refnum": 94,
+    "page": 5
   },
   {
     "rubrique": "Appareils de mesures et mesures",
@@ -3692,7 +3740,8 @@
     "year": 2004,
     "bulletinNum": "94",
     "bulletinPath": "/bulletins/94.pdf",
-    "refnum": 94
+    "refnum": 94,
+    "page": 5
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3747,7 +3796,8 @@
     "year": 2004,
     "bulletinNum": "97",
     "bulletinPath": "/bulletins/97.pdf",
-    "refnum": 97
+    "refnum": 97,
+    "page": 5
   },
   {
     "rubrique": "Appareils de mesures et mesures",
@@ -3758,7 +3808,8 @@
     "year": 2004,
     "bulletinNum": "97",
     "bulletinPath": "/bulletins/97.pdf",
-    "refnum": 97
+    "refnum": 97,
+    "page": 18
   },
   {
     "rubrique": "Alimentations",
@@ -3769,7 +3820,8 @@
     "year": 2004,
     "bulletinNum": "97",
     "bulletinPath": "/bulletins/97.pdf",
-    "refnum": 97
+    "refnum": 97,
+    "page": 5
   },
   {
     "rubrique": "Sous-ensembles - Composants",
@@ -3780,7 +3832,8 @@
     "year": 2004,
     "bulletinNum": "98",
     "bulletinPath": "/bulletins/98.pdf",
-    "refnum": 98
+    "refnum": 98,
+    "page": 10
   },
   {
     "rubrique": "Sous-ensembles - Composants",
@@ -3791,7 +3844,8 @@
     "year": 2004,
     "bulletinNum": "98",
     "bulletinPath": "/bulletins/98.pdf",
-    "refnum": 98
+    "refnum": 98,
+    "page": 10
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3802,7 +3856,8 @@
     "year": 2004,
     "bulletinNum": "99",
     "bulletinPath": "/bulletins/99.pdf",
-    "refnum": 99
+    "refnum": 99,
+    "page": 5
   },
   {
     "rubrique": "PA - Amplificateurs",
@@ -3813,7 +3868,8 @@
     "year": 2004,
     "bulletinNum": "99",
     "bulletinPath": "/bulletins/99.pdf",
-    "refnum": 99
+    "refnum": 99,
+    "page": 11
   },
   {
     "rubrique": "Appareils de mesures et mesures",
@@ -3824,7 +3880,8 @@
     "year": 2004,
     "bulletinNum": "99",
     "bulletinPath": "/bulletins/99.pdf",
-    "refnum": 99
+    "refnum": 99,
+    "page": 5
   },
   {
     "rubrique": "PA - Amplificateurs",

@@ -11,10 +11,10 @@ Trafic - Propagation - Organisation	Bilan de liaison troposphérique direct en SH
 Sous-ensembles - Composants	Multiplicateur à MMIC ERA-1	F1GHB	1/1/1997	7	/bulletins/7.pdf	6
 Sous-ensembles - Composants	Pré-diviseurs par 1000 à 2,4 GHz	F6FAX	1/1/1997	7	/bulletins/7.pdf	4
 Assemblage - Accessoires - Mécanique	Réalisation des circuits imprimés hyper	F1GHb	1/1/1997	7	/bulletins/7.pdf	8
-Trafic - Propagation - Organisation	Les hyper-fréquences en fixe	F5HRY	2/1/1997	8	/bulletins/8.pdf	
-Assemblage - Accessoires - Mécanique	Support pour station SHF	F8UM	2/1/1997	8	/bulletins/8.pdf	
-Oscillateurs - OL	Générateur faible signal stable sur 10 GHz	F9HX	3/1/1997	9	/bulletins/9.pdf	
-Antennes - Lignes	Système d'élévation d'une parabole offset	F1JGP	3/1/1997	9	/bulletins/9.pdf	
+Trafic - Propagation - Organisation	Les hyper-fréquences en fixe	F5HRY	2/1/1997	8	/bulletins/8.pdf	7
+Assemblage - Accessoires - Mécanique	Support pour station SHF	F8UM	2/1/1997	8	/bulletins/8.pdf	12
+Oscillateurs - OL	Générateur faible signal stable sur 10 GHz	F9HX	3/1/1997	9	/bulletins/9.pdf	5
+Antennes - Lignes	Système d'élévation d'une parabole offset	F1JGP	3/1/1997	9	/bulletins/9.pdf	9
 PA - Amplificateurs	Ampli large bande VHF UHF SHF	F9HX	4/1/1997	10	/bulletins/10.pdf	7
 Oscillateurs - OL	Source 10 GHz 	F1DFY	4/1/1997	10	/bulletins/10.pdf	5
 Balises	Balise 5,7 GHz pas chère	F5HRY	4/1/1997	10	/bulletins/10.pdf	14
@@ -263,75 +263,75 @@ Trafic - Propagation - Organisation	Débuter en hyperfréquences  (part 4)	F8IC	11
 Sous-ensembles - Composants	Filtre passe bas 3 pôles 13 et 23cm	F5JGY	11/1/2002	76	/bulletins/76.pdf	
 Sous-ensembles - Composants	Séquenceur E/R 	F6ETU	11/1/2002	76	/bulletins/76.pdf	
 Sous-ensembles - Composants	Histoire du YIG	Guy Bouville	11/1/2002	76	/bulletins/76.pdf	11
-Trafic - Propagation - Organisation	Débuter en hyperfréquences (part 5)	F8IC	12/1/2002	77	/bulletins/77.pdf	
-PA - Amplificateurs	Circuit de polarisation pour amplis à FET	F5JGY	12/1/2002	77	/bulletins/77.pdf	
-Oscillateurs - OL	Prenez garde à la malice des PLL	F9HX	12/1/2002	77	/bulletins/77.pdf	
-Appareils de mesures et mesures	Réparation d'un mélangeur de HP8555 pour le HP 141 (part 2)	F6HGQ & F6FMR	12/1/2002	77	/bulletins/77.pdf	
-Antennes - Lignes	Source EME 10 GHz d'après IK5WJD	F6DRO	12/1/2002	77	/bulletins/77.pdf	
-Trafic - Propagation - Organisation	Débuter en hyperfréquences  (Correction erratum)	F8IC	1/1/2003	78	/bulletins/78.pdf	
-Sous-ensembles - Composants	MMIC GAL en ampli	F1GHB	1/1/2003	78	/bulletins/78.pdf	
-Appareils de mesures et mesures	Prédiviseur par 1000  > 3 GHz	G. Bouville	1/1/2003	78	/bulletins/78.pdf	
-Transceivers - Transverters - Convertisseurs	30 kHz de balayage pour l'IC202	S51JN	2/1/2003	79	/bulletins/79.pdf	
-Sous-ensembles - Composants	Manipulateur électronique à mémoire	F6DRO	2/1/2003	79	/bulletins/79.pdf	
-Oscillateurs - OL	Les Oscillateurs Locaux (part 1)	F6BVA	2/1/2003	79	/bulletins/79.pdf	
-PA - Amplificateurs	AMPLI 60 watts sur 6 cm	F6DPH	3/1/2003	80	/bulletins/80.pdf	
-Oscillateurs - OL	Les Oscillateurs Locaux (suite)	F6BVA	3/1/2003	80	/bulletins/80.pdf	
-Oscillateurs - OL	Un moyen de pouvoir être certain de sa fréquence	F9HX & F5CAU	3/1/2003	80	/bulletins/80.pdf	
-Optique	75 km sur 447 THz	F1AVY	3/1/2003	80	/bulletins/80.pdf	
-Sous-ensembles - Composants	Un galva particulier avec un ampli OP et un galva ordinaire	F6ABX / F1HSU	4/1/2003	81	/bulletins/81.pdf	
-Oscillateurs - OL	Les oscillateurs locaux (part 2)	F6BVA	4/1/2003	81	/bulletins/81.pdf	
-Oscillateurs - OL	Les oscillateurs locaux (part 3)	F6BVA	4/1/2003	81	/bulletins/81.pdf	
-Transceivers - Transverters - Convertisseurs	Transverter 24 GHZ ATV / SSB 	F6CGB	5/1/2003	82	/bulletins/82.pdf	
-Oscillateurs - OL	Synthèse d'un signal VHF avec une ref.  10 MHz  suite 	F9HX & F5CAU	5/1/2003	82	/bulletins/82.pdf	
-Assemblage - Accessoires - Mécanique	Tirage des circuits imprimés	F6BVA	5/1/2003	82	/bulletins/82.pdf	
-PA - Amplificateurs	Essais sur un transistor MRF284	F4CIB	6/1/2003	83	/bulletins/83.pdf	
-PA - Amplificateurs	Amplificateur 60 W sur 5,7 GHz: le typon	F6DPH	6/1/2003	83	/bulletins/83.pdf	
-Antennes - Lignes	Transitions guide/ Coax	F1GHB	6/1/2003	83	/bulletins/83.pdf	
-Antennes - Lignes	Coupler deux yagis 25 éléments sur 13 cm (part 1)	F5JGY	6/1/2003	83	/bulletins/83.pdf	
+Trafic - Propagation - Organisation	Débuter en hyperfréquences (part 5)	F8IC	12/1/2002	77	/bulletins/77.pdf	5
+PA - Amplificateurs	Circuit de polarisation pour amplis à FET	F5JGY	12/1/2002	77	/bulletins/77.pdf	15
+Oscillateurs - OL	Prenez garde à la malice des PLL	F9HX	12/1/2002	77	/bulletins/77.pdf	10
+Appareils de mesures et mesures	Réparation d'un mélangeur de HP8555 pour le HP 141 (part 2)	F6HGQ & F6FMR	12/1/2002	77	/bulletins/77.pdf	9
+Antennes - Lignes	Source EME 10 GHz d'après IK5WJD	F6DRO	12/1/2002	77	/bulletins/77.pdf	20
+Trafic - Propagation - Organisation	Débuter en hyperfréquences  (Correction erratum)	F8IC	1/1/2003	78	/bulletins/78.pdf	11
+Sous-ensembles - Composants	MMIC GAL en ampli	F1GHB	1/1/2003	78	/bulletins/78.pdf	12
+Appareils de mesures et mesures	Prédiviseur par 1000  > 3 GHz	G. Bouville	1/1/2003	78	/bulletins/78.pdf	14
+Transceivers - Transverters - Convertisseurs	30 kHz de balayage pour l'IC202	S51JN	2/1/2003	79	/bulletins/79.pdf	9
+Sous-ensembles - Composants	Manipulateur électronique à mémoire	F6DRO	2/1/2003	79	/bulletins/79.pdf	6
+Oscillateurs - OL	Les Oscillateurs Locaux (part 1)	F6BVA	2/1/2003	79	/bulletins/79.pdf	13
+PA - Amplificateurs	AMPLI 60 watts sur 6 cm	F6DPH	3/1/2003	80	/bulletins/80.pdf	5
+Oscillateurs - OL	Les Oscillateurs Locaux (suite)	F6BVA	3/1/2003	80	/bulletins/80.pdf	11
+Oscillateurs - OL	Un moyen de pouvoir être certain de sa fréquence	F9HX & F5CAU	3/1/2003	80	/bulletins/80.pdf	11
+Optique	75 km sur 447 THz	F1AVY	3/1/2003	80	/bulletins/80.pdf	11
+Sous-ensembles - Composants	Un galva particulier avec un ampli OP et un galva ordinaire	F6ABX / F1HSU	4/1/2003	81	/bulletins/81.pdf	5
+Oscillateurs - OL	Les oscillateurs locaux (part 2)	F6BVA	4/1/2003	81	/bulletins/81.pdf	5
+Oscillateurs - OL	Les oscillateurs locaux (part 3)	F6BVA	4/1/2003	81	/bulletins/81.pdf	5
+Transceivers - Transverters - Convertisseurs	Transverter 24 GHZ ATV / SSB 	F6CGB	5/1/2003	82	/bulletins/82.pdf	8
+Oscillateurs - OL	Synthèse d'un signal VHF avec une ref.  10 MHz  suite 	F9HX & F5CAU	5/1/2003	82	/bulletins/82.pdf	16
+Assemblage - Accessoires - Mécanique	Tirage des circuits imprimés	F6BVA	5/1/2003	82	/bulletins/82.pdf	6
+PA - Amplificateurs	Essais sur un transistor MRF284	F4CIB	6/1/2003	83	/bulletins/83.pdf	4
+PA - Amplificateurs	Amplificateur 60 W sur 5,7 GHz: le typon	F6DPH	6/1/2003	83	/bulletins/83.pdf	4
+Antennes - Lignes	Transitions guide/ Coax	F1GHB	6/1/2003	83	/bulletins/83.pdf	4
+Antennes - Lignes	Coupler deux yagis 25 éléments sur 13 cm (part 1)	F5JGY	6/1/2003	83	/bulletins/83.pdf	4
 Sous-ensembles - Composants	Commutation séquencée	F1BZG	8/1/2003	84	/bulletins/84.pdf	
 Oscillateurs - OL	Synthèse d'un signal VHF avec une ref.  10 MHz  mise au point 	F9HX	8/1/2003	84	/bulletins/84.pdf	
 Optique	LASER et IR	F1PLX	8/1/2003	84	/bulletins/84.pdf	
 Antennes - Lignes	Coupler deux yagis 25 éléments sur 13 cm (part 2)	F5JGY	8/1/2003	84	/bulletins/84.pdf	
 Alimentations	Alimentation forte puissance pour GaAs FET	F6DPH	8/1/2003	84	/bulletins/84.pdf	
-Trafic - Propagation - Organisation	Calcul de distance et azimut sur calculette programmable	F6GYJ	9/1/2003	85	/bulletins/85.pdf	
-PA - Amplificateurs	Classe A ou Classe B	F1PLX	9/1/2003	85	/bulletins/85.pdf	
-Balises	Balise 6 cm	F6BVA	9/1/2003	85	/bulletins/85.pdf	
-Antennes - Lignes	Réflecteur Cassegrain	F8IC	9/1/2003	85	/bulletins/85.pdf	
+Trafic - Propagation - Organisation	Calcul de distance et azimut sur calculette programmable	F6GYJ	9/1/2003	85	/bulletins/85.pdf	5
+PA - Amplificateurs	Classe A ou Classe B	F1PLX	9/1/2003	85	/bulletins/85.pdf	5
+Balises	Balise 6 cm	F6BVA	9/1/2003	85	/bulletins/85.pdf	5
+Antennes - Lignes	Réflecteur Cassegrain	F8IC	9/1/2003	85	/bulletins/85.pdf	5
 Transceivers - Transverters - Convertisseurs	Transverter 76 GHz	F5CAU	10/1/2003	86	/bulletins/86.pdf	
 Sous-ensembles - Composants	Convertisseur 12 -> 24 V  10A	F6CSX	10/1/2003	86	/bulletins/86.pdf	
 Oscillateurs - OL	Nos oscillateurs locaux ( suite mais pas fin)	F6BVA	10/1/2003	86	/bulletins/86.pdf	
-Appareils de mesures et mesures	Perte dans les liaisons entre circuits	F9HX & F1EER	11/1/2003	87	/bulletins/87.pdf	
-Sous-ensembles - Composants	Relais 10 GHz sans contact	F6BON	12/1/2003	88	/bulletins/88.pdf	
-Appareils de mesures et mesures	Diviseur par 10  jusqu'à 6 GHz	F6BON	12/1/2003	88	/bulletins/88.pdf	
+Appareils de mesures et mesures	Perte dans les liaisons entre circuits	F9HX & F1EER	11/1/2003	87	/bulletins/87.pdf	11
+Sous-ensembles - Composants	Relais 10 GHz sans contact	F6BON	12/1/2003	88	/bulletins/88.pdf	16
+Appareils de mesures et mesures	Diviseur par 10  jusqu'à 6 GHz	F6BON	12/1/2003	88	/bulletins/88.pdf	15
 Oscillateurs - OL	Oscillateurs Locaux (suite)	F6BVA	1/1/2004	89	/bulletins/89.pdf	
 Optique	LASER et IR 	F1PLX	1/1/2004	89	/bulletins/89.pdf	
 Appareils de mesures et mesures	Couper les hertz en quatre (part 1)	F8IC	1/1/2004	89	/bulletins/89.pdf	
 Appareils de mesures et mesures	Couper les hertz en quatre 	F8IC	1/1/2004	89	/bulletins/89.pdf	
-Oscillateurs - OL	Oscillateurs Locaux (suite et fin)	F6BVA	2/1/2004	90	/bulletins/90.pdf	
-Oscillateurs - OL	Le Z3801A (standard de F contrôlé par GPS)	F6HGQ	2/1/2004	90	/bulletins/90.pdf	
-Optique	LASER et IR (suite mais pas fin!)	F1PLX	2/1/2004	90	/bulletins/90.pdf	
-Appareils de mesures et mesures	Couper les hertz en quatre (part 2)	F8IC	2/1/2004	90	/bulletins/90.pdf	
-PA - Amplificateurs	Réalisation d'un driver 500 mW sur 5,7 GHz	F1JGP	3/1/2004	91	/bulletins/91.pdf	
-PA - Amplificateurs	Ampli cryogénique à faible bruit à 5,7 GHz	F1PLX	3/1/2004	91	/bulletins/91.pdf	
-Oscillateurs - OL	ERRATUM OL 12 GHz (page 11 du Hyper n° 90)	F6BVA	3/1/2004	91	/bulletins/91.pdf	
-Antennes - Lignes	Asservissement d'antennes pour l'E.M.E.	F5JWF	3/1/2004	91	/bulletins/91.pdf	
-Optique	LASER et I.R.	F1PLX	4/1/2004	92	/bulletins/92.pdf	
-Alimentations	Protection et sécurité des montages 12 et 24 VDC	F5JGY	4/1/2004	92	/bulletins/92.pdf	
-PA - Amplificateurs	Théorie des amplis de puissance à haut rendement	F1PLX	5/1/2004	93	/bulletins/93.pdf	
-PA - Amplificateurs	Préampli bande S par F1JGP	F1JGP	6/1/2004	94	/bulletins/94.pdf	
-Appareils de mesures et mesures	Le niveau dans les mélangeurs hyper	F6CGB	6/1/2004	94	/bulletins/94.pdf	
+Oscillateurs - OL	Oscillateurs Locaux (suite et fin)	F6BVA	2/1/2004	90	/bulletins/90.pdf	8
+Oscillateurs - OL	Le Z3801A (standard de F contrôlé par GPS)	F6HGQ	2/1/2004	90	/bulletins/90.pdf	8
+Optique	LASER et IR (suite mais pas fin!)	F1PLX	2/1/2004	90	/bulletins/90.pdf	8
+Appareils de mesures et mesures	Couper les hertz en quatre (part 2)	F8IC	2/1/2004	90	/bulletins/90.pdf	8
+PA - Amplificateurs	Réalisation d'un driver 500 mW sur 5,7 GHz	F1JGP	3/1/2004	91	/bulletins/91.pdf	4
+PA - Amplificateurs	Ampli cryogénique à faible bruit à 5,7 GHz	F1PLX	3/1/2004	91	/bulletins/91.pdf	4
+Oscillateurs - OL	ERRATUM OL 12 GHz (page 11 du Hyper n° 90)	F6BVA	3/1/2004	91	/bulletins/91.pdf	4
+Antennes - Lignes	Asservissement d'antennes pour l'E.M.E.	F5JWF	3/1/2004	91	/bulletins/91.pdf	4
+Optique	LASER et I.R.	F1PLX	4/1/2004	92	/bulletins/92.pdf	6
+Alimentations	Protection et sécurité des montages 12 et 24 VDC	F5JGY	4/1/2004	92	/bulletins/92.pdf	6
+PA - Amplificateurs	Théorie des amplis de puissance à haut rendement	F1PLX	5/1/2004	93	/bulletins/93.pdf	4
+PA - Amplificateurs	Préampli bande S par F1JGP	F1JGP	6/1/2004	94	/bulletins/94.pdf	5
+Appareils de mesures et mesures	Le niveau dans les mélangeurs hyper	F6CGB	6/1/2004	94	/bulletins/94.pdf	5
 PA - Amplificateurs	Préampli sélectif bande L	F1JGP	8/1/2004	95	/bulletins/95.pdf	
 PA - Amplificateurs	LNA 10 GHz pas cher	F6CXO	8/1/2004	95	/bulletins/95.pdf	
 Alimentations	Récupération d'un circuit de polarisation d'un LNB SAT	F5JGY	8/1/2004	95	/bulletins/95.pdf	
 Alimentations	Convertisseur 12 à 24V	HB9DUG	8/1/2004	95	/bulletins/95.pdf	
-Sous-ensembles - Composants	Mesures sur petits isolateurs / circulateurs	F1GHB & F5EFD	10/1/2004	97	/bulletins/97.pdf	
-Appareils de mesures et mesures	Générateur de peigne hyper	F2SF	10/1/2004	97	/bulletins/97.pdf	
-Alimentations	Alimentation à découpage 28V pour PA à LDMOS	DH2VA & HB9DUN	10/1/2004	97	/bulletins/97.pdf	
-Sous-ensembles - Composants	Doubleur 12->24 GHz	F6CXO	11/1/2004	98	/bulletins/98.pdf	
-Sous-ensembles - Composants	Charges, atténuateurs, revêtements en hyper	W3HMS	11/1/2004	98	/bulletins/98.pdf	
-PA - Amplificateurs	Réalisation d'un ampli 1,3 W sur 13 cm	F1JGP	12/1/2004	99	/bulletins/99.pdf	
-PA - Amplificateurs	Adaptation des PA 6,4 et 7 GHz pour le 6 cm	F5JGY	12/1/2004	99	/bulletins/99.pdf	
-Appareils de mesures et mesures	Connecteurs pour tiroirs HP	W3HMS	12/1/2004	99	/bulletins/99.pdf	
+Sous-ensembles - Composants	Mesures sur petits isolateurs / circulateurs	F1GHB & F5EFD	10/1/2004	97	/bulletins/97.pdf	5
+Appareils de mesures et mesures	Générateur de peigne hyper	F2SF	10/1/2004	97	/bulletins/97.pdf	18
+Alimentations	Alimentation à découpage 28V pour PA à LDMOS	DH2VA & HB9DUN	10/1/2004	97	/bulletins/97.pdf	5
+Sous-ensembles - Composants	Doubleur 12->24 GHz	F6CXO	11/1/2004	98	/bulletins/98.pdf	10
+Sous-ensembles - Composants	Charges, atténuateurs, revêtements en hyper	W3HMS	11/1/2004	98	/bulletins/98.pdf	10
+PA - Amplificateurs	Réalisation d'un ampli 1,3 W sur 13 cm	F1JGP	12/1/2004	99	/bulletins/99.pdf	5
+PA - Amplificateurs	Adaptation des PA 6,4 et 7 GHz pour le 6 cm	F5JGY	12/1/2004	99	/bulletins/99.pdf	11
+Appareils de mesures et mesures	Connecteurs pour tiroirs HP	W3HMS	12/1/2004	99	/bulletins/99.pdf	5
 PA - Amplificateurs	Adaptation des PA 6,4 et 7 GHz pour le 6 cm	F5JGY	1/1/2005	100	/bulletins/100.pdf	5
 Antennes - Lignes	Illuminer une parabole offset en 23 cm	F4CXQ	1/1/2005	100	/bulletins/100.pdf	15
 Antennes - Lignes	Support de parabole pour mat Versatower	F6FTN	1/1/2005	100	/bulletins/100.pdf	5
